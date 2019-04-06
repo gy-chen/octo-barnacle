@@ -10,7 +10,9 @@ with open('octo_barnacle/__init__.py', 'r') as f:
     else:
         version = '0.0.1'
 
-REQUIRES = []
+REQUIRES = [
+    'python-telegram-bot'
+]
 
 setup(
     name='octo-barnacle',

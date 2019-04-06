@@ -1,4 +1,4 @@
-def collect_stickerset(stickerset_id):
+def collect_stickerset(stickerset_name):
     """Collect specific stickerset
 
     This function does:
@@ -6,7 +6,11 @@ def collect_stickerset(stickerset_id):
         - collect sticker file from telegram
         - store stickerset data into storage
 
-    This function will acquire a distributed lock, raise AcquireLockException if fail to acquired.
+    Raises:
+        AcquireLockException: if failed to acquire distributed lock
+
+    Args:
+        - stickerset_name (str): stickerset name that usually obtained from telegram api
     """
     # TODO
     pass
