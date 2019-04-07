@@ -11,7 +11,7 @@ from octo_barnacle.model import collect_stickerset
 def collect_sticker(update, context):
     """collect sticker set of sticker sent by user"""
     sticker = update.message.sticker
-    collect_stickerset(sticker.set_name)
+    collect_stickerset(context.bot, sticker.set_name)
 
 
 def get_handlers():
