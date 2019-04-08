@@ -1,7 +1,8 @@
 import io
+from functools import lru_cache
 
 
-def collect_stickerset(bot, stickerset_name):
+def collect_stickerset(bot, storage, stickerset_name):
     """Collect specific stickerset
 
     This function does:
@@ -20,7 +21,8 @@ def collect_stickerset(bot, stickerset_name):
         {
             'stickerset_name': raw_stickerset.name,
             'emoji': sticker.emoji,
-            'image': get_file_binary_content(bot, sticker.file_id)
+            'image': _get_file(bot, sticker.file_id)['binary_content'],
+            'image_path': _get_file(bot, sticker.file_id)['path']
         }
         for sticker in raw_stickerset.stickers
     ]
@@ -28,11 +30,15 @@ def collect_stickerset(bot, stickerset_name):
         'name': raw_stickerset.name,
         'title': raw_stickerset.title,
     }
-    # TODO store stickerset
+    storage.store(stickerset, stickers)
 
 
-def get_file_binary_content(bot, file_id):
+@lru_cache
+def _get_file(bot, file_id):
     file_ = bot.get_file(file_id)
     binary_data = io.BytesIO()
     file_.download(out=binary_data)
-    return binary_data.value()
+    return {
+        'path': file_.file_path,
+        'binary_content': binary_data.value()
+    }
