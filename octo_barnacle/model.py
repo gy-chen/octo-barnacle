@@ -17,7 +17,7 @@ def collect_stickerset(bot, storage, stickerset_name):
         - stickerset_name (str): stickerset name that usually obtained from telegram api
     """
     raw_stickerset = bot.get_sticker_set(stickerset_name)
-    stickers = [
+    stickers = (
         {
             'stickerset_name': raw_stickerset.name,
             'emoji': sticker.emoji,
@@ -25,7 +25,7 @@ def collect_stickerset(bot, storage, stickerset_name):
             'image_path': _get_file(bot, sticker.file_id)['path']
         }
         for sticker in raw_stickerset.stickers
-    ]
+    )
     stickerset = {
         'name': raw_stickerset.name,
         'title': raw_stickerset.title,
