@@ -12,7 +12,8 @@ with open('octo_barnacle/__init__.py', 'r') as f:
 
 REQUIRES = [
     'python-telegram-bot',
-    'pymongo'
+    'pymongo',
+    'python-dotenv'
 ]
 
 setup(

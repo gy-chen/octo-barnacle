@@ -5,8 +5,13 @@ Functions:
   - get_updater()
 
 """
-from telegram.ext import Updater, Bot
+import os
+from telegram import Bot
+from telegram.ext import Updater
+from dotenv import load_dotenv
 from octo_barnacle.bot.handlers import get_handlers
+
+load_dotenv()
 
 
 def get_bot():
@@ -15,10 +20,9 @@ def get_bot():
     This function will initialize telegram bot with token that received from enviroment.
 
     Returns:
-      telegram.Bot: python-telegram-bot object 
+      telegram.Bot: python-telegram-bot object
     """
-    # TODO read token from enviroment
-    bot = Bot()
+    bot = Bot(token=os.getenv('BOT_TOKEN'))
     return bot
 
 
@@ -30,8 +34,7 @@ def get_updater():
     Return:
       telegram.ext.updater.Updater
     """
-    # TODO read token from entiroment.
-    updater = Updater()
+    updater = Updater(token=os.getenv('BOT_TOKEN'))
     for handler in get_handlers():
         updater.dispatcher.add_handler(handler)
     return updater
