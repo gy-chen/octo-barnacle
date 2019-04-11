@@ -38,6 +38,8 @@ def _get_stickers(bot, stickerset_name):
             'stickerset_name': raw_stickerset.name,
             'emoji': sticker.emoji,
             'image': sticker_file['binary_content'],
+            'image_width': sticker.width,
+            'image_height': sticker.height,
             'image_path': sticker_file['path']
         }
 

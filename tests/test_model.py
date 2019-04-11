@@ -25,4 +25,6 @@ def test_get_stickers(bot):
     ) == '2c5feb400b16bf73c47a68bfd4512181'
     assert sticker['image_path'].startswith(
         'https://api.telegram.org/file/bot')
-    assert sticker['image_path'].endswith('stickers/file_0.webp')
+    assert sticker['image_path'].endswith('.webp')
+    assert sticker['image_width'] == 512
+    assert sticker['image_height'] == 512

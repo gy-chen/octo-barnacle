@@ -17,7 +17,8 @@ class StickerStorage:
 
         Args:
           stickerset (dict): expect has fields name, and title
-          stickers (list): expect item of list has fields stickerset_name, emoji, image, and image_path
+          stickers (list): expect item of list has fields stickerset_name, emoji, 
+            image, image_width, image_height, and image_path
         """
         self._db[self.COLLECTION_STICKERSET].update_one(
             {'name': stickerset['name']},

@@ -43,3 +43,5 @@ def test_storage(db, sample_stickerset, sample_stickers):
     assert sticker['emoji'] == sample_sticker['emoji']
     assert sticker['image'] == sample_sticker['image']
     assert sticker['image_path'] == sample_sticker['image_path']
+    assert sticker['image_width'] == sample_sticker['image_width']
+    assert sticker['image_height'] == sample_sticker['image_height']
