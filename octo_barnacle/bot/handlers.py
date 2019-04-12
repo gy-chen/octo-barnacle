@@ -6,12 +6,14 @@ functions:
 """
 from telegram.ext import MessageHandler, Filters
 from octo_barnacle.model import collect_stickerset
+from octo_barnacle.bot.context import get_storage
 
 
 def collect_sticker(update, context):
     """collect sticker set of sticker sent by user"""
+    storage = get_storage()
     sticker = update.message.sticker
-    collect_stickerset(context.bot, sticker.set_name)
+    collect_stickerset(context.bot, storage, sticker.set_name)
 
 
 def get_handlers():

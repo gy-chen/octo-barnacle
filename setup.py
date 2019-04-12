@@ -11,9 +11,11 @@ with open('octo_barnacle/__init__.py', 'r') as f:
         version = '0.0.1'
 
 REQUIRES = [
-    'python-telegram-bot',
+    'python-telegram-bot==12.0.0b1',
     'pymongo',
-    'python-dotenv'
+    'python-dotenv',
+    # TODO search for better place for dev dependency
+    'pyrogram'
 ]
 
 setup(

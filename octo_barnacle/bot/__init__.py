@@ -34,7 +34,7 @@ def get_updater():
     Return:
       telegram.ext.updater.Updater
     """
-    updater = Updater(token=os.getenv('BOT_TOKEN'))
+    updater = Updater(token=os.getenv('BOT_TOKEN'), use_context=True)
     for handler in get_handlers():
         updater.dispatcher.add_handler(handler)
     return updater
