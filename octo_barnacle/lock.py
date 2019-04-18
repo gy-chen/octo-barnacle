@@ -10,7 +10,7 @@ class LockManager:
             expires (int): lock expire time in seconds 
 
         Raises:
-            LockException
+            LockError
 
         Returns:
             string for unlocking the resource
@@ -26,3 +26,7 @@ class LockManager:
         """
         # TODO
         pass
+
+
+class LockError(Exception):
+    pass
