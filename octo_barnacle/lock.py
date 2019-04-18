@@ -9,17 +9,20 @@ class LockManager:
             resource (str): resource name
             expires (int): lock expire time in seconds 
 
+        Raises:
+            LockException
+
         Returns:
-            True if lock successfully, False otherwise
+            string for unlocking the resource
         """
         # TODO
         pass
 
-    def unlock(self, resource):
+    def unlock(self, lock):
         """Unlock specific resource
 
         Args:
-            resource (str): resource name
+            lock (str): value that retrived from lock return value
         """
         # TODO
         pass
