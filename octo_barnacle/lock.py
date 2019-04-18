@@ -1,3 +1,6 @@
+import uuid
+
+
 class LockManager:
     def __init__(self, redis):
         self._redis = redis
@@ -15,17 +18,25 @@ class LockManager:
         Returns:
             string for unlocking the resource
         """
-        # TODO
-        pass
+        lock_value = self._generate_lock_value()
+        acquire_result = self._redis.set(
+            resource, lock_value, ex=expires, nx=True)
+        if acquire_result is None:
+            raise LockError()
+        return lock_value
 
-    def unlock(self, lock):
+    def unlock(self, resource, lock_value):
         """Unlock specific resource
 
         Args:
-            lock (str): value that retrived from lock return value
+            resource (str): resource name
+            lock_value (str): value that retrived from lock return value
         """
-        # TODO
-        pass
+        if self._redis.get(resource) == lock_value:
+            self._redis.delete(resource)
+
+    def _generate_lock_value(self):
+        return uuid.uuid1().hex.encode()
 
 
 class LockError(Exception):

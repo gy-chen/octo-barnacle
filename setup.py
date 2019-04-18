@@ -14,6 +14,7 @@ REQUIRES = [
     'python-telegram-bot==12.0.0b1',
     'pymongo',
     'python-dotenv',
+    'redis',
     # TODO search for better place for dev dependency
     'pyrogram'
 ]
