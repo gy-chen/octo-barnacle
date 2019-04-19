@@ -1,12 +1,51 @@
 import hashlib
+import time
+import os
 import pytest
+from redis import Redis
+from pymongo import MongoClient
 from octo_barnacle.bot import get_bot
+from octo_barnacle.bot import context
+from octo_barnacle.storage import StickerStorage
+from octo_barnacle.config import MongoConfig
 from octo_barnacle import model
+from octo_barnacle import lock
 
 
 @pytest.fixture
 def bot():
     return get_bot()
+
+
+@pytest.fixture
+def redis():
+    r = Redis(
+        host=os.environ.get('TEST_REDIS_HOST'),
+        port=os.environ.get('TEST_REDIS_PORT')
+    )
+    yield r
+    r.flushdb()
+
+
+@pytest.fixture
+def lock_manager(redis):
+    lm = lock.LockManager(redis, 10)
+    context.lock_manager = lm
+    return lm
+
+
+@pytest.fixture
+def db():
+    client = MongoClient()
+    yield client.test_database
+    client.drop_database('test_database')
+
+
+@pytest.fixture
+def storage(db):
+    s = StickerStorage(db)
+    context.storage = s
+    return s
 
 
 def test_get_stickerset(bot):
@@ -28,3 +67,13 @@ def test_get_stickers(bot):
     assert sticker['image_path'].endswith('.webp')
     assert sticker['image_width'] == 512
     assert sticker['image_height'] == 512
+
+
+def test_lock(bot, storage, lock_manager):
+    model.collect_stickerset(bot, storage, lock_manager, 'Python')
+
+    with pytest.raises(lock.LockError):
+        model.collect_stickerset(bot, storage, lock_manager, 'Python')
+
+    time.sleep(11)
+    model.collect_stickerset(bot, storage, lock_manager, 'Python')

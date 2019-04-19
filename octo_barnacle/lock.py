@@ -2,10 +2,11 @@ import uuid
 
 
 class LockManager:
-    def __init__(self, redis):
+    def __init__(self, redis, default_expires=86400):
         self._redis = redis
+        self._default_expires = default_expires
 
-    def lock(self, resource, expires=86400):
+    def lock(self, resource, expires=None):
         """lock specific resource
 
         Args:
@@ -18,6 +19,7 @@ class LockManager:
         Returns:
             string for unlocking the resource
         """
+        expires = expires or self._default_expires
         lock_value = self._generate_lock_value()
         acquire_result = self._redis.set(
             resource, lock_value, ex=expires, nx=True)

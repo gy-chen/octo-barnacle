@@ -1,7 +1,7 @@
 import io
 
 
-def collect_stickerset(bot, storage, stickerset_name):
+def collect_stickerset(bot, storage, lock_manager, stickerset_name):
     """Collect specific stickerset
 
     This function does:
@@ -9,12 +9,17 @@ def collect_stickerset(bot, storage, stickerset_name):
         - collect sticker file from telegram
         - store stickerset data into storage
 
-    Raises:
-        AcquireLockException: if failed to acquire distributed lock
-
     Args:
+        - bot (telegram.Bot): python-telegram-bot Bot instance
+        - storage (octo_barnacle.storage.StickerStorage): usually obtained by octo_barnacle.storage.get_storage()
+        - lock_manager (octo_barnacle.lock.LockManager): usually obtained by octo_barnacle.lock.get_lock_manager()
         - stickerset_name (str): stickerset name that usually obtained from telegram api
+
+    Raises:
+        LockError: if failed to acquire distributed lock
     """
+    lock_manager.lock(stickerset_name)
+
     stickerset = _get_stickerset(bot, stickerset_name)
     stickers = _get_stickers(bot, stickerset_name)
 
