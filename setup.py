@@ -15,6 +15,7 @@ REQUIRES = [
     'pymongo',
     'python-dotenv',
     'redis',
+    'requests',
     # TODO search for better place for dev dependency
     'pyrogram'
 ]

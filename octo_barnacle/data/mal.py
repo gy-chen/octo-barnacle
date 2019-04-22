@@ -6,9 +6,13 @@ RecommendationPager
 RecommendationParser
     parse content of https://myanimelist.net/recommendations.php?s=recentrecs&t=anime page
 """
+import itertools
+import requests
 
 
 class RecommendationPager:
+
+    BASE_URL = 'https://myanimelist.net/recommendations.php?s=recentrecs&t=anime'
 
     def get(self, page):
         """Get content of specific page
@@ -22,12 +26,23 @@ class RecommendationPager:
         Return:
             page content
         """
-        # TODO
-        pass
+        show_param = self._convert_to_show_param(page)
+        url = "{}&show={}".format(
+            self.BASE_URL, self._convert_to_show_param(page))
+        res = requests.get(url)
+        res.raise_for_status()
+        return res.text
+
+    def _convert_to_show_param(self, page):
+        """show param 100 equal to page 1, 200 equal to page 2, ...etc"""
+        return int(page) * 100
 
     def __iter__(self):
-        # TODO
-        pass
+        try:
+            for page in itertools.count():
+                yield self.get(page)
+        except requests.HTTPError:
+            pass
 
 
 class RecommendationParser:
