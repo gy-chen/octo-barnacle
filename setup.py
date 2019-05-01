@@ -16,6 +16,7 @@ REQUIRES = [
     'python-dotenv',
     'redis',
     'requests',
+    'beautifulsoup4',
     # TODO search for better place for dev dependency
     'pyrogram'
 ]

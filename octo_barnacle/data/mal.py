@@ -8,6 +8,7 @@ RecommendationParser
 """
 import itertools
 import requests
+from bs4 import BeautifulSoup
 
 
 class RecommendationPager:
@@ -49,7 +50,7 @@ class RecommendationPager:
 class RecommendationParser:
 
     def parse(self, content):
-        """Parse recommendation page content 
+        """Parse recommendation page content
 
         Args:
             content (str): page content of recommendation page
@@ -57,5 +58,33 @@ class RecommendationParser:
         Return:
             list of dict that contain recommendations
         """
-        # TODO
-        pass
+        soup = BeautifulSoup(content, 'html.parser')
+        content = soup.find(id='content')
+        recomm_raws = content.find_all(class_='borderClass')
+        return [self._parse_recomm(recomm_raw) for recomm_raw in recomm_raws]
+
+    def _parse_recomm(self, recomm_raw):
+        return {
+            'from': self._parse_from(recomm_raw),
+            'to': self._parse_to(recomm_raw),
+            'description': self._parse_description(recomm_raw)
+        }
+
+    def _parse_from(self, recomm_raw):
+        content = recomm_raw.find_all('td')[0]
+        return self._parse_anime(content)
+
+    def _parse_to(self, recomm_raw):
+        content = recomm_raw.find_all('td')[1]
+        return self._parse_anime(content)
+
+    def _parse_anime(self, anime):
+        img_link = anime.find('img')['data-src']
+        title = anime.find('strong').string
+        return {
+            'img_link': img_link,
+            'title': title
+        }
+
+    def _parse_description(self, recomm_raw):
+        return recomm_raw.find(class_='recommendations-user-recs-text').string
