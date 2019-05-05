@@ -18,12 +18,16 @@ def collect_stickerset(bot, storage, lock_manager, stickerset_name):
     Raises:
         LockError: if failed to acquire distributed lock
     """
-    lock_manager.lock(stickerset_name)
+    lock_val = lock_manager.lock(stickerset_name)
 
-    stickerset = _get_stickerset(bot, stickerset_name)
-    stickers = _get_stickers(bot, stickerset_name)
+    try:
+        stickerset = _get_stickerset(bot, stickerset_name)
+        stickers = _get_stickers(bot, stickerset_name)
 
-    storage.store(stickerset, stickers)
+        storage.store(stickerset, stickers)
+    except Exception as e:
+        lock_manager.unlock(stickerset_name, lock_val)
+        raise e
 
 
 def _get_stickerset(bot, stickerset_name):
