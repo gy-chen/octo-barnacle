@@ -17,6 +17,7 @@ REQUIRES = [
     'redis',
     'requests',
     'beautifulsoup4',
+    'fasteners',
     # TODO search for better place for dev dependency
     'pyrogram'
 ]
@@ -33,4 +34,9 @@ setup(
     install_requires=REQUIRES,
     tests_require=['pytest'],
     packages=find_packages(),
+    entry_points={
+        'console_scripts': [
+            'octo-barnacle-collect-mal-recommendation=octo_barnacle.collectors.mal:main',
+        ],
+    },
 )
