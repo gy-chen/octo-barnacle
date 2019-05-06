@@ -46,14 +46,15 @@ def main(config=MalCollectorConfig):
         logger.warn('other mal collector is running.')
         return
     with pid_lock:
+        logger.info('start mal collector')
         _download_mal_recommendations(
             config.DOWNLOAD_DELAY, config.MAL_FILENAME, config.FORCE_DOWNLOAD)
         for recommendation in _open_mal_recommendations(config.MAL_FILENAME):
-
             _collect_stickerset(bot, storage_, lock_manager,
                                 recommendation['from']['title'])
             _collect_stickerset(bot, storage_, lock_manager,
                                 recommendation['to']['title'])
+        logger.info('finish mal collector')
 
 
 def _collect_stickerset(bot, storage, lock_manager, stickerset_name):
@@ -86,6 +87,7 @@ def _download_mal_recommendations(download_delay, path, force):
         logging.info('skip download because {} exists.'.format(path))
         return
 
+    logger.info('start to download MAL recommendations')
     pager = octo_barnacle.data.mal.RecommendationPager(download_delay)
     parser = octo_barnacle.data.mal.RecommendationParser()
     with open(path, 'w', newline='') as csvfile:
@@ -101,6 +103,7 @@ def _download_mal_recommendations(download_delay, path, force):
                     recommendation['to']['img_link'],
                     recommendation['description']
                 ])
+    logger.info('downloaded MAL recommendations')
 
 
 def _open_mal_recommendations(path):
