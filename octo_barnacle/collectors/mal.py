@@ -8,7 +8,6 @@ import logging
 import fasteners
 import octo_barnacle.data.mal
 from telegram import Bot
-from telegram.error import BadRequest
 from pymongo import MongoClient
 from redis import Redis
 from octo_barnacle import model
@@ -50,10 +49,17 @@ def main(config=MalCollectorConfig):
         _download_mal_recommendations(
             config.DOWNLOAD_DELAY, config.MAL_FILENAME, config.FORCE_DOWNLOAD)
         for recommendation in _open_mal_recommendations(config.MAL_FILENAME):
+
+            logger.info('try to collect {}'.format(
+                recommendation['from']['title']))
             _collect_stickerset(bot, storage_, lock_manager,
                                 recommendation['from']['title'])
+
+            logger.info('try to collect {}'.format(
+                recommendation['to']['title']))
             _collect_stickerset(bot, storage_, lock_manager,
                                 recommendation['to']['title'])
+
         logger.info('finish mal collector')
 
 
@@ -61,8 +67,8 @@ def _collect_stickerset(bot, storage, lock_manager, stickerset_name):
     try:
         model.collect_stickerset(bot, storage, lock_manager, stickerset_name)
         logger.info("collected {}".format(stickerset_name))
-    except BadRequest:
-        logger.debug('cannot found stickerset {}'.format(stickerset_name))
+    except model.StickerSetNotFoundError:
+        logger.info('cannot found stickerset {}'.format(stickerset_name))
     except lock.LockError:
         logger.info(
             'searched {} before, ignore it now.'.format(stickerset_name))
@@ -93,7 +99,7 @@ def _download_mal_recommendations(download_delay, path, force):
     with open(path, 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         for page, content in enumerate(pager):
-            logger.debug(
+            logger.info(
                 'download MAL recommendations page {} content'.format(page))
             for recommendation in parser.parse(content):
                 csvwriter.writerow([

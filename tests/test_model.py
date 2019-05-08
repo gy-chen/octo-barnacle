@@ -4,7 +4,6 @@ import os
 import pytest
 from redis import Redis
 from pymongo import MongoClient
-from telegram import error
 from octo_barnacle.bot import get_bot
 from octo_barnacle.bot import context
 from octo_barnacle.storage import StickerStorage
@@ -80,10 +79,10 @@ def test_lock(bot, storage, lock_manager):
     model.collect_stickerset(bot, storage, lock_manager, 'Python')
 
 
-def test_unlock_when_error(bot, storage, lock_manager, redis):
+def test_not_exists_stickerset(bot, storage, lock_manager, redis):
     not_exists_stickerset = 'AAABBBCC NOT EXISTS STICKERSET AAABBBCCC'
-    with pytest.raises(error.BadRequest):
+    with pytest.raises(model.StickerSetNotFoundError):
         model.collect_stickerset(
             bot, storage, lock_manager, not_exists_stickerset)
 
-    assert redis.get(not_exists_stickerset) is None
+    assert redis.get(not_exists_stickerset) is not None

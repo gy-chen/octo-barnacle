@@ -1,4 +1,18 @@
 import io
+from telegram.error import BadRequest
+
+
+class CollectStickerSetError(Exception):
+    pass
+
+
+class StickerSetNotFoundError(CollectStickerSetError):
+
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return self.name
 
 
 def collect_stickerset(bot, storage, lock_manager, stickerset_name):
@@ -16,7 +30,9 @@ def collect_stickerset(bot, storage, lock_manager, stickerset_name):
         - stickerset_name (str): stickerset name that usually obtained from telegram api
 
     Raises:
-        LockError: if failed to acquire distributed lock
+        octo_barnacle.lock.LockError: if failed to acquire distributed lock
+        StickerSetNotFoundError: if stickerset not found
+        StickerSetNotFoundError: if encounter any error while collect stickerset
     """
     lock_val = lock_manager.lock(stickerset_name)
 
@@ -25,9 +41,11 @@ def collect_stickerset(bot, storage, lock_manager, stickerset_name):
         stickers = _get_stickers(bot, stickerset_name)
 
         storage.store(stickerset, stickers)
+    except BadRequest as e:
+        raise StickerSetNotFoundError(stickerset_name) from e
     except Exception as e:
         lock_manager.unlock(stickerset_name, lock_val)
-        raise e
+        raise CollectStickerSetError from e
 
 
 def _get_stickerset(bot, stickerset_name):
