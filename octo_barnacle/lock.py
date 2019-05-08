@@ -1,17 +1,19 @@
 import uuid
+import datetime
 
 
 class LockManager:
-    def __init__(self, redis, default_expires=86400):
+    def __init__(self, redis, default_expires=None):
         self._redis = redis
-        self._default_expires = default_expires
+        self._default_expires = default_expires or int(
+            datetime.timedelta(days=30).total_seconds())
 
     def lock(self, resource, expires=None):
         """lock specific resource
 
         Args:
             resource (str): resource name
-            expires (int): lock expire time in seconds 
+            expires (int): lock expire time in seconds
 
         Raises:
             LockError
