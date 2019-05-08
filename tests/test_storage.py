@@ -45,3 +45,8 @@ def test_storage(db, sample_stickerset, sample_stickers):
     assert sticker['image_path'] == sample_sticker['image_path']
     assert sticker['image_width'] == sample_sticker['image_width']
     assert sticker['image_height'] == sample_sticker['image_height']
+
+
+def test_insert_empty_stickers(db, sample_stickerset):
+    sticker_storage = storage.StickerStorage(db)
+    sticker_storage.store(sample_stickerset, [])

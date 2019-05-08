@@ -29,7 +29,8 @@ class StickerStorage:
         )
         self._db[self.COLLECTION_STICKERS].delete_many(
             {'stickerset_name': stickerset['name']})
-        self._db[self.COLLECTION_STICKERS].insert_many(stickers)
+        if stickers:
+            self._db[self.COLLECTION_STICKERS].insert_many(stickers)
 
     def get_stickersets(self):
         """Get stored stickersets.
