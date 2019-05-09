@@ -1,3 +1,9 @@
+import logging
+from pymongo.errors import InvalidOperation
+
+logger = logging.getLogger(__name__)
+
+
 class StickerStorage:
     """Store sticker set and stickers"""
 
@@ -29,8 +35,11 @@ class StickerStorage:
         )
         self._db[self.COLLECTION_STICKERS].delete_many(
             {'stickerset_name': stickerset['name']})
-        if stickers:
+        try:
             self._db[self.COLLECTION_STICKERS].insert_many(stickers)
+        except (InvalidOperation, TypeError):
+            logger.warning(
+                'insert empty stickers of stickerset {}'.format(stickerset['name']))
 
     def get_stickersets(self):
         """Get stored stickersets.

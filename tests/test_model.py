@@ -86,3 +86,7 @@ def test_not_exists_stickerset(bot, storage, lock_manager, redis):
             bot, storage, lock_manager, not_exists_stickerset)
 
     assert redis.get(not_exists_stickerset) is not None
+
+
+def test_empty_stickers(bot, storage, lock_manager):
+    model.collect_stickerset(bot, storage, lock_manager, 'Naruto')

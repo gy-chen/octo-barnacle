@@ -50,3 +50,8 @@ def test_storage(db, sample_stickerset, sample_stickers):
 def test_insert_empty_stickers(db, sample_stickerset):
     sticker_storage = storage.StickerStorage(db)
     sticker_storage.store(sample_stickerset, [])
+
+    def gen_empty_stickers():
+        yield
+
+    sticker_storage.store(sample_stickerset, gen_empty_stickers())
