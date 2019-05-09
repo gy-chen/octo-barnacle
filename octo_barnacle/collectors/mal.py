@@ -28,7 +28,8 @@ def main(config=MalCollectorConfig):
     Arguments:
         config (octo_barnacle.config.MalCollectorConfig)
     """
-    logging.basicConfig(level=logging.INFO)
+    # TODO maybe load level config from enviroment
+    logging.basicConfig(level=logging.DEBUG)
     os.makedirs(config.WORK_DIR, exist_ok=True)
     os.chdir(config.WORK_DIR)
     bot = Bot(token=config.BOT_TOKEN)
