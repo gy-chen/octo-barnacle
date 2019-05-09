@@ -5,6 +5,7 @@
 import csv
 import os
 import logging
+import functools
 import fasteners
 import octo_barnacle.data.mal
 from telegram import Bot
@@ -14,6 +15,7 @@ from octo_barnacle import model
 from octo_barnacle import lock
 from octo_barnacle import storage
 from .config import MalCollectorConfig
+from . import utils
 
 logger = logging.getLogger(__name__)
 
@@ -49,17 +51,9 @@ def main(config=MalCollectorConfig):
         logger.info('start mal collector')
         _download_mal_recommendations(
             config.DOWNLOAD_DELAY, config.MAL_FILENAME, config.FORCE_DOWNLOAD)
-        for recommendation in _open_mal_recommendations(config.MAL_FILENAME):
-
-            logger.info('try to collect {}'.format(
-                recommendation['from']['title']))
-            _collect_stickerset(bot, storage_, lock_manager,
-                                recommendation['from']['title'])
-
-            logger.info('try to collect {}'.format(
-                recommendation['to']['title']))
-            _collect_stickerset(bot, storage_, lock_manager,
-                                recommendation['to']['title'])
+        for title in _gen_recommendation_titles(_open_mal_recommendations(config.MAL_FILENAME)):
+            logger.info('try to collect {}'.format(title))
+            _collect_stickerset(bot, storage_, lock_manager, title)
 
         logger.info('finish mal collector')
 
@@ -129,3 +123,43 @@ def _open_mal_recommendations(path):
                 },
                 'description': row[4]
             }
+
+
+def _gen_recommendation_titles(recommendations):
+    """generate titles from recommendation from and to data
+
+    this function also applied some modify to original title:
+        - remove punctations
+        - remove whitespace
+        - try append number
+
+    Args:
+        recommendations: iterable of recommendation dict
+            {
+                'from': {
+                    'title': '...',
+                    'img_link': '...'
+                },
+                'to': {
+                    'title': '...',
+                    'img_link': '...'
+                },
+                'description': '...'
+            }
+
+    Returns:
+        iterable of title string
+    """
+    def gen_titles():
+        for recommendation in recommendations:
+            yield recommendation['from']['title']
+            yield recommendation['to']['title']
+    result_gen = gen_titles()
+    chain = [
+        utils.gen_remove_punctuation,
+        utils.gen_remove_whitespace,
+        functools.partial(utils.gen_append_range_number, from_=1, to=4)
+    ]
+    for c in chain:
+        result_gen = c(result_gen)
+    return result_gen
