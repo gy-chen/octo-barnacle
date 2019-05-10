@@ -67,7 +67,7 @@ def _collect_stickerset(bot, storage, lock_manager, stickerset_name):
     except lock.LockError:
         logger.info(
             'searched {} before, ignore it now.'.format(stickerset_name))
-    except:
+    except Exception:
         logging.exception(
             'encounter error while collect stickerset {}'.format(stickerset_name))
 
