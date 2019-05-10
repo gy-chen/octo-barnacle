@@ -34,15 +34,9 @@ def main(config=MalCollectorConfig):
     logging.basicConfig(level=logging.DEBUG)
     os.makedirs(config.WORK_DIR, exist_ok=True)
     os.chdir(config.WORK_DIR)
-    bot = Bot(token=config.BOT_TOKEN)
-    db = MongoClient(config.MONGO_CONFIG.HOST, config.MONGO_CONFIG.PORT)[
-        config.MONGO_CONFIG.DB]
-    storage_ = storage.StickerStorage(db)
-    r = Redis(
-        host=config.REDIS_CONFIG.HOST,
-        port=config.REDIS_CONFIG.PORT
-    )
-    lock_manager = lock.LockManager(r)
+    bot = _get_bot(config)
+    storage_ = _get_storage(config)
+    lock_manager = _get_lock_manager()
     pid_lock = fasteners.InterProcessLock('mal_pid')
     if not pid_lock.acquire(blocking=False):
         logger.warn('other mal collector is running.')
@@ -54,8 +48,25 @@ def main(config=MalCollectorConfig):
         for title in _gen_recommendation_titles(_open_mal_recommendations(config.MAL_FILENAME)):
             logger.info('try to collect {}'.format(title))
             _collect_stickerset(bot, storage_, lock_manager, title)
+    logger.info('finish mal collector')
 
-        logger.info('finish mal collector')
+
+def _get_bot(config=MalCollectorConfig):
+    return Bot(token=config.BOT_TOKEN)
+
+
+def _get_storage(config=MalCollectorConfig):
+    db = MongoClient(config.MONGO_CONFIG.HOST, config.MONGO_CONFIG.PORT)[
+        config.MONGO_CONFIG.DB]
+    return storage.StickerStorage(db)
+
+
+def _get_lock_manager(config=MalCollectorConfig):
+    r = Redis(
+        host=config.REDIS_CONFIG.HOST,
+        port=config.REDIS_CONFIG.PORT
+    )
+    return lock.LockManager(r)
 
 
 def _collect_stickerset(bot, storage, lock_manager, stickerset_name):
