@@ -11,6 +11,12 @@ def test_is_not_emoji():
     for s in string.printable:
         assert not utils.is_emoji(s)
 
+    for o in range(ord('\U0001f600'), ord('\U0001f64f')+1):
+        assert not utils.is_emoji(' ' + chr(o))
+        assert not utils.is_emoji('a' + chr(o))
+        assert not utils.is_emoji(chr(o) + ' ')
+        assert not utils.is_emoji(chr(o) + ' ')
+
 
 def test_is_symbol():
     for o in range(ord('\U0001f300'), ord('\U0001f5ff')+1):
@@ -20,3 +26,9 @@ def test_is_symbol():
 def test_is_not_symbol():
     for s in string.printable:
         assert not utils.is_symbol(s)
+
+    for o in range(ord('\U0001f300'), ord('\U0001f5ff')+1):
+        assert not utils.is_emoji(' ' + chr(o))
+        assert not utils.is_emoji('a' + chr(o))
+        assert not utils.is_emoji(chr(o) + ' ')
+        assert not utils.is_emoji(chr(o) + ' ')

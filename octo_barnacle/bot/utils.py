@@ -1,7 +1,7 @@
 import re
 
-PATTERN_EMOJI = re.compile(r'[\U0001f600-\U0001f64f]')
-PATTERN_SYMBOL = re.compile(r'[\U0001f300-\U0001f5ff]')
+PATTERN_EMOJI = re.compile(r'\A[\U0001f600-\U0001f64f]\Z')
+PATTERN_SYMBOL = re.compile(r'\A[\U0001f300-\U0001f5ff]\Z')
 
 
 def is_emoji(text):
