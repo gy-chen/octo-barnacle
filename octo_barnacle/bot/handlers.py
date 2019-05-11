@@ -4,10 +4,12 @@ functions:
   - collect_sticker: collect sticker set of sticker sent by user
 
 """
+import logging
 from telegram.ext import MessageHandler, Filters
-from octo_barnacle.model import collect_stickerset
+from octo_barnacle.model import collect_stickerset, CollectStickerSetError
 from octo_barnacle.bot.context import get_storage, get_lock_manager
-from octo_barnacle.lock import LockError
+
+logger = logging.getLogger(__name__)
 
 
 def collect_sticker(update, context):
@@ -18,9 +20,9 @@ def collect_sticker(update, context):
     try:
         collect_stickerset(context.bot, storage,
                            lock_manager, sticker.set_name)
-    except LockError:
-        # TODO log
-        pass
+    except CollectStickerSetError as e:
+        logger.warn('failed to collect {}'.format(
+            sticker.set_name), exc_info=e)
 
 
 def get_handlers():
