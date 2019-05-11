@@ -98,3 +98,17 @@ def test_collect_stickers(updater, storage, user_client, sample_stickerset, samp
         'http') and sticker['image_path'].endswith('.webp')
     assert sticker['image_width'] == sample_sticker['image_width']
     assert sticker['image_height'] == sample_sticker['image_height']
+
+
+def test_send_emoji(updater, storage, user_client):
+    updater.start_polling()
+    user_client.send_sticker(os.environ.get('TEST_PYROGRAM_BOT_ID'),
+                             'CAADBQADCAIAAv-EDwMwropGUQmLWQI')
+    time.sleep(10)
+
+    user_client.send_message(os.environ.get(
+        'TEST_PYROGRAM_BOT_ID'), '\U0001f600')
+    user_client.send_message(os.environ.get(
+        'TEST_PYROGRAM_BOT_ID'), '\U0001f40d')
+    # TODO need a way to check result automatically
+    time.sleep(10)
