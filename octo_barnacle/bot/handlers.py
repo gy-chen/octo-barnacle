@@ -29,7 +29,6 @@ def collect_sticker(update, context):
 
 def send_random_emoji_sticker(update, context):
     """random choice sticker that matched emoji sent by user"""
-    breakpoint()
     storage = get_storage()
     sticker_query = get_sticker_query()
     emoji = update.message.text
