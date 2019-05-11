@@ -38,3 +38,12 @@ def get_updater():
     for handler in get_handlers():
         updater.dispatcher.add_handler(handler)
     return updater
+
+
+def main():
+    "entry point for starting bot"
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
+    updater = get_updater()
+    updater.start_polling()
+    updater.idle()

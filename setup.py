@@ -37,6 +37,7 @@ setup(
     entry_points={
         'console_scripts': [
             'octo-barnacle-collect-mal-recommendation=octo_barnacle.collectors.mal:main',
+            'octo-barnacle-bot=octo_barnacle.bot:main'
         ],
     },
 )
