@@ -1,6 +1,8 @@
 """Store shared variables."""
 import pymongo
+import redis
 from octo_barnacle.storage import StickerStorage
+from octo_barnacle.lock import LockManager
 from octo_barnacle.config import MongoConfig
 from octo_barnacle.config import RedisConfig
 

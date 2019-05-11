@@ -5,7 +5,9 @@ import pytest
 import pyrogram
 from dotenv import load_dotenv
 from pymongo import MongoClient
+from redis import Redis
 from octo_barnacle.storage import StickerStorage
+from octo_barnacle.lock import LockManager
 from octo_barnacle.bot import context, get_updater
 from octo_barnacle.config import MongoConfig
 
@@ -14,10 +16,19 @@ basepath = os.path.dirname(__file__)
 
 
 @pytest.fixture
-def updater():
-    updater = get_updater()
-    yield updater
-    updater.stop()
+def redis():
+    r = Redis(
+        host=os.environ.get('TEST_REDIS_HOST'),
+        port=os.environ.get('TEST_REDIS_PORT')
+    )
+    yield r
+    r.flushdb()
+
+
+@pytest.fixture
+def lock_manager(redis):
+    lock_manager = LockManager(redis)
+    return lock_manager
 
 
 @pytest.fixture
@@ -32,6 +43,15 @@ def storage(db):
     storage = StickerStorage(db)
     context.storage = storage
     return storage
+
+
+@pytest.fixture
+def updater(storage, lock_manager, monkeypatch):
+    monkeypatch.setattr('octo_barnacle.bot.context.storage', storage)
+    monkeypatch.setattr('octo_barnacle.bot.context.lock_manager', lock_manager)
+    updater = get_updater()
+    yield updater
+    updater.stop()
 
 
 @pytest.fixture
@@ -74,6 +94,7 @@ def test_collect_stickers(updater, storage, user_client, sample_stickerset, samp
     assert sticker['stickerset_name'] == sample_sticker['stickerset_name']
     assert sticker['emoji'] == sample_sticker['emoji']
     assert sticker['image'] == sample_sticker['image']
-    assert sticker['image_path'] == sample_sticker['image_path']
+    assert sticker['image_path'].startswith(
+        'http') and sticker['image_path'].endswith('.webp')
     assert sticker['image_width'] == sample_sticker['image_width']
     assert sticker['image_height'] == sample_sticker['image_height']
