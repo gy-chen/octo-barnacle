@@ -8,6 +8,7 @@ import logging
 import functools
 import fasteners
 import octo_barnacle.data.mal
+import octo_barnacle.data.downloader
 from telegram import Bot
 from pymongo import MongoClient
 from redis import Redis
@@ -36,7 +37,8 @@ def main(config=MalCollectorConfig):
     os.chdir(config.WORK_DIR)
     bot = _get_bot(config)
     storage_ = _get_storage(config)
-    lock_manager = _get_lock_manager()
+    lock_manager = _get_lock_manager(config)
+    downloader = _get_downloader(config)
     pid_lock = fasteners.InterProcessLock('mal_pid')
     if not pid_lock.acquire(blocking=False):
         logger.warn('other mal collector is running.')
@@ -44,7 +46,7 @@ def main(config=MalCollectorConfig):
     with pid_lock:
         logger.info('start mal collector')
         _download_mal_recommendations(
-            config.DOWNLOAD_DELAY, config.MAL_FILENAME, config.FORCE_DOWNLOAD)
+            downloader, config.MAL_FILENAME, config.FORCE_DOWNLOAD)
         for title in _gen_recommendation_titles(_open_mal_recommendations(config.MAL_FILENAME)):
             logger.info('try to collect {}'.format(title))
             _collect_stickerset(bot, storage_, lock_manager, title)
@@ -69,6 +71,10 @@ def _get_lock_manager(config=MalCollectorConfig):
     return lock.LockManager(r)
 
 
+def _get_downloader(config=MalCollectorConfig):
+    return octo_barnacle.data.downloader.Downloader(config.DOWNLOAD_DELAY)
+
+
 def _collect_stickerset(bot, storage, lock_manager, stickerset_name):
     try:
         model.collect_stickerset(bot, storage, lock_manager, stickerset_name)
@@ -83,7 +89,7 @@ def _collect_stickerset(bot, storage, lock_manager, stickerset_name):
             'encounter error while collect stickerset {}'.format(stickerset_name))
 
 
-def _download_mal_recommendations(download_delay, path, force):
+def _download_mal_recommendations(downloader, path, force):
     """Fetch MAL recommendation and save to disk
 
     Saved file format is csv.
@@ -92,7 +98,8 @@ def _download_mal_recommendations(download_delay, path, force):
     override by force argument
 
     Args:
-        - path: path to save file
+        - downloader (octo_barnacle.data.downloader.Downloader): for downloading content
+        - path (str): path to save file
         - force (bool): set to True if want to download even target path exists.
     """
     if os.path.exists(path) and not force:
@@ -100,7 +107,7 @@ def _download_mal_recommendations(download_delay, path, force):
         return
 
     logger.info('start to download MAL recommendations')
-    pager = octo_barnacle.data.mal.RecommendationPager(download_delay)
+    pager = octo_barnacle.data.mal.RecommendationPager(downloader)
     parser = octo_barnacle.data.mal.RecommendationParser()
     with open(path, 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
