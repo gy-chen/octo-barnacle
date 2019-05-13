@@ -14,17 +14,15 @@ from bs4 import BeautifulSoup
 
 class RecommendationPager:
 
-    USER_AGENT = 'OctoBarnacle/0.1 (+https://github.com/gy-chen/octo-barnacle)'
     BASE_URL = 'https://myanimelist.net/recommendations.php?s=recentrecs&t=anime'
 
-    def __init__(self, delay=None):
+    def __init__(self, downloader):
         """init
 
         Args:
-            delay (int): delay in seconds between every requests
+            downloader (octo_barnacle.data.downloader.Downloader): for downloading content
         """
-        self._delay = delay
-        self._last_req_time = None
+        self._downloader = downloader
 
     def get(self, page):
         """Get content of specific page
@@ -33,35 +31,20 @@ class RecommendationPager:
             page (int): page number, start from 0
 
         Raises:
-            NotFoundError: raise if page is not exists (usually is reached end of pages)
+            PageNotFoundError: raise if page is not exists (usually is reached end of pages)
 
         Return:
             page content
         """
-        try:
-            self._ensure_delay()
-        except _DelayError:
-            time.sleep(self._delay)
-            return self.get(page)
         show_param = self._convert_to_show_param(page)
         url = "{}&show={}".format(
             self.BASE_URL, self._convert_to_show_param(page))
-
-        headers = {}
-        if self.USER_AGENT:
-            headers['user-agent'] = self.USER_AGENT
-        res = requests.get(url, headers=headers)
-        res.raise_for_status()
-        return res.text
-
-    def _ensure_delay(self):
-        if self._delay is None:
-            return
-        if self._last_req_time is None:
-            self._last_req_time = time.time()
-            return
-        if self._delay > time.time() - self._last_req_time:
-            raise _DelayError()
+        try:
+            return self._downloader.download(url)
+        except requests.HTTPError as e:
+            if e.response.status_code != 404:
+                raise
+            raise PageNotFoundError()
 
     def _convert_to_show_param(self, page):
         """show param 100 equal to page 1, 200 equal to page 2, ...etc"""
@@ -74,6 +57,10 @@ class RecommendationPager:
         except requests.HTTPError as e:
             if e.response.status_code != 404:
                 raise e
+
+
+class PageNotFoundError(Exception):
+    pass
 
 
 class _DelayError(Exception):

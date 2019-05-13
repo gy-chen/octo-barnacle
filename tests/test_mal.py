@@ -2,6 +2,7 @@ import os
 import pytest
 import requests
 from octo_barnacle.data import mal
+from octo_barnacle.data.downloader import Downloader
 
 base_path = os.path.dirname(__file__)
 
@@ -14,27 +15,12 @@ def sample_mal_page0():
 
 
 @pytest.fixture
-def pager_delay():
-    return 3
+def downloader():
+    return Downloader(3)
 
 
-def test_pager_delay(pager_delay):
-    pager_too_fast = mal.RecommendationPager()
-    pager_too_fast.USER_AGENT = None
-
-    with pytest.raises(requests.HTTPError):
-        pager_too_fast_iter = iter(pager_too_fast)
-        for _ in range(10):
-            next(pager_too_fast_iter)
-
-    pager_normal = mal.RecommendationPager(delay=pager_delay)
-    pager_normal_iter = iter(pager_normal)
-    for _ in range(10):
-        next(pager_normal_iter)
-
-
-def test_pager(pager_delay):
-    pager = mal.RecommendationPager(delay=pager_delay)
+def test_pager(downloader):
+    pager = mal.RecommendationPager(downloader)
 
     page0 = pager.get(0)
     assert '<title>Anime Recommendations - MyAnimeList.net\n</title>' in page0
@@ -45,8 +31,8 @@ def test_pager(pager_delay):
     assert '[2]' in page1
 
 
-def test_pager_iter(pager_delay):
-    pager = mal.RecommendationPager(delay=pager_delay)
+def test_pager_iter(downloader):
+    pager = mal.RecommendationPager(downloader)
 
     pager_iter = iter(pager)
     page0 = next(pager_iter)
@@ -56,6 +42,12 @@ def test_pager_iter(pager_delay):
     page1 = next(pager_iter)
     assert '<title>Anime Recommendations - MyAnimeList.net\n</title>' in page1
     assert '[2]' in page1
+
+
+def test_pager_not_found(downloader):
+    pager = mal.RecommendationPager(downloader)
+    with pytest.raises(mal.PageNotFoundError):
+        pager.get(1e9)
 
 
 def test_parser(sample_mal_page0):
@@ -71,8 +63,8 @@ def test_parser(sample_mal_page0):
     assert result[2]['description'] == '- Creative supernatural and magical concepts (including some which reminded me specifically of this particular film).\n- Similar concept of girl attempting to fit into a world different from their own\n- Beautiful artistry on par with many Miyazaki films\n'
 
 
-def test_run(pager_delay):
-    pager = mal.RecommendationPager(delay=pager_delay)
+def test_run(downloader):
+    pager = mal.RecommendationPager(downloader)
     parser = mal.RecommendationParser()
 
     for page in range(5):
