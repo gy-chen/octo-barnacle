@@ -46,7 +46,7 @@ def main(config=MalCollectorConfig):
     with pid_lock:
         logger.info('start mal collector')
         _download_mal_recommendations(
-            downloader, config.MAL_FILENAME, config.FORCE_DOWNLOAD)
+            downloader, config.MAL_TYPE, config.MAL_FILENAME, config.FORCE_DOWNLOAD)
         for title in _gen_recommendation_titles(_open_mal_recommendations(config.MAL_FILENAME)):
             logger.info('try to collect {}'.format(title))
             _collect_stickerset(bot, storage_, lock_manager, title)
@@ -89,7 +89,7 @@ def _collect_stickerset(bot, storage, lock_manager, stickerset_name):
             'encounter error while collect stickerset {}'.format(stickerset_name))
 
 
-def _download_mal_recommendations(downloader, path, force):
+def _download_mal_recommendations(downloader, type_, path, force):
     """Fetch MAL recommendation and save to disk
 
     Saved file format is csv.
@@ -98,16 +98,17 @@ def _download_mal_recommendations(downloader, path, force):
     override by force argument
 
     Args:
-        - downloader (octo_barnacle.data.downloader.Downloader): for downloading content
-        - path (str): path to save file
-        - force (bool): set to True if want to download even target path exists.
+        downloader (octo_barnacle.data.downloader.Downloader): for downloading content
+        type_ (octo_barnacle.data.mal.RecommendationType): type of recommendations want to download
+        path (str): path to save file
+        force (bool): set to True if want to download even target path exists.
     """
     if os.path.exists(path) and not force:
         logging.info('skip download because {} exists.'.format(path))
         return
 
     logger.info('start to download MAL recommendations')
-    pager = octo_barnacle.data.mal.RecommendationPager(downloader)
+    pager = octo_barnacle.data.mal.RecommendationPager(downloader, type_)
     parser = octo_barnacle.data.mal.RecommendationParser()
     with open(path, 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)

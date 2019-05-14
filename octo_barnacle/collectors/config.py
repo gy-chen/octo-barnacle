@@ -2,6 +2,7 @@ import os
 import dotenv
 from ..config import MongoConfig
 from ..config import RedisConfig
+from ..data.mal import RecommendationType
 
 dotenv.load_dotenv()
 
@@ -15,3 +16,4 @@ class MalCollectorConfig:
     DOWNLOAD_DELAY = int(os.getenv('MAL_COLLECTOR_DOWNLOAD_DELAY', 3))
     WORK_DIR = os.path.expanduser(os.getenv('MAL_COLLECTOR_WORKDIR', './'))
     MAL_FILENAME = os.getenv('MAL_COLLECTOR_FILENAME', 'mal.csv')
+    MAL_TYPE = RecommendationType(os.getenv('MAL_TYPE', 'anime'))
