@@ -7,22 +7,32 @@ RecommendationParser
     parse content of https://myanimelist.net/recommendations.php?s=recentrecs&t=anime page
 """
 import itertools
+import enum
 import time
 import requests
 from bs4 import BeautifulSoup
 
 
+class RecommendationType(enum.Enum):
+    ANIME = 'anime'
+    MANGA = 'manga'
+
+
 class RecommendationPager:
 
-    BASE_URL = 'https://myanimelist.net/recommendations.php?s=recentrecs&t=anime'
+    BASE_URL = 'https://myanimelist.net/recommendations.php?s=recentrecs'
 
-    def __init__(self, downloader):
+    def __init__(self, downloader, type_=None):
         """init
 
         Args:
             downloader (octo_barnacle.data.downloader.Downloader): for downloading content
+            type_ (RecommendationType): type of recommendation want to download
         """
         self._downloader = downloader
+        self._type = type_
+        if self._type is None:
+            self._type = RecommendationType.ANIME
 
     def get(self, page):
         """Get content of specific page
@@ -37,8 +47,8 @@ class RecommendationPager:
             page content
         """
         show_param = self._convert_to_show_param(page)
-        url = "{}&show={}".format(
-            self.BASE_URL, self._convert_to_show_param(page))
+        url = "{}&show={}&t={}".format(
+            self.BASE_URL, self._convert_to_show_param(page), self._type.value)
         try:
             return self._downloader.download(url)
         except requests.HTTPError as e:
