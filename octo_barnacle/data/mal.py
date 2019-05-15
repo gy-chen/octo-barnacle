@@ -64,9 +64,8 @@ class RecommendationPager:
         try:
             for page in itertools.count():
                 yield self.get(page)
-        except requests.HTTPError as e:
-            if e.response.status_code != 404:
-                raise e
+        except PageNotFoundError:
+            return
 
 
 class PageNotFoundError(Exception):
