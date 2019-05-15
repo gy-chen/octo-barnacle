@@ -58,6 +58,7 @@ def test_get_stickers(bot):
     stickers = list(model._get_stickers(bot, 'python'))
     assert len(stickers) == 1
     sticker = stickers[0]
+    assert sticker['image_id'] == 'CAADBQADCAIAAv-EDwMwropGUQmLWQI'
     assert sticker['stickerset_name'] == 'Python'
     assert sticker['emoji'] == '🐍'
     assert hashlib.md5(sticker['image']).hexdigest(

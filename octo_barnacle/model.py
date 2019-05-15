@@ -62,6 +62,7 @@ def _get_stickers(bot, stickerset_name):
     for sticker in raw_stickerset.stickers:
         sticker_file = _get_file(bot, sticker.file_id)
         yield {
+            'image_id': sticker.file_id,
             'stickerset_name': raw_stickerset.name,
             'emoji': sticker.emoji,
             'image': sticker_file['binary_content'],

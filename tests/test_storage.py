@@ -39,6 +39,7 @@ def test_storage(db, sample_stickerset, sample_stickers):
 
     sticker = next(sticker_storage.get_stickers(stickerset['name']))
     sample_sticker = sample_stickers[0]
+    assert sticker['image_id'] == sample_sticker['image_id']
     assert sticker['stickerset_name'] == sample_sticker['stickerset_name']
     assert sticker['emoji'] == sample_sticker['emoji']
     assert sticker['image'] == sample_sticker['image']
