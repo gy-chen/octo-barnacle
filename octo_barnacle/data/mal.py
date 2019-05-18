@@ -180,7 +180,7 @@ class CharacterParser:
             content (str): MAL character page content, usually get from CharacterPager
 
         Return:
-            dict in format: 
+            list of dict in format: 
                 {
                     'people': {
                         'name': 'character name',
