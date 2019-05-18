@@ -1,4 +1,5 @@
 import os
+import bson
 import pytest
 import requests
 from octo_barnacle.data import mal
@@ -19,6 +20,30 @@ def sample_manga_mal_page0():
     sample_path = os.path.join(base_path, 'sample_manga_mal_page0.html')
     with open(sample_path, 'r') as f:
         return f.read()
+
+
+@pytest.fixture
+def sample_mal_character_page_empty():
+    sample_path = os.path.join(
+        base_path, 'sample_mal_character_page_empty.html')
+    with open(sample_path, 'r') as f:
+        return f.read()
+
+
+@pytest.fixture
+def sample_mal_character_page_0():
+    sample_path = os.path.join(
+        base_path, 'sample_mal_character_page_0.html')
+    with open(sample_path, 'r') as f:
+        return f.read()
+
+
+@pytest.fixture
+def sample_mal_character_page_0_ranking_list():
+    sample_path = os.path.join(
+        base_path, 'sample_mal_character_page_0.bson')
+    with open(sample_path, 'rb') as f:
+        return bson.BSON.decode(f.read())['ranking_list']
 
 
 @pytest.fixture
@@ -115,3 +140,26 @@ def test_run(downloader):
     for page in range(5):
         page_content = pager.get(page)
         assert len(parser.parse(page_content)) == 100
+
+
+def test_character_pager(downloader):
+    pager = mal.CharacterPager(downloader)
+
+    with pytest.raises(mal.PageNotFoundError):
+        pager.get(1e9)
+
+
+def test_character_parser(sample_mal_character_page_0, sample_mal_character_page_0_ranking_list):
+    parser = mal.CharacterParser()
+
+    ranking_list = parser.parse(sample_mal_character_page_0)
+
+    assert len(ranking_list) == 50
+    assert ranking_list == sample_mal_character_page_0_ranking_list
+
+
+def test_character_parser_empty(sample_mal_character_page_empty):
+    parser = mal.CharacterParser()
+
+    ranking_list = parser.parse(sample_mal_character_page_empty)
+    assert len(ranking_list) == 0
