@@ -1,5 +1,15 @@
 import string
+import os
+import logging
+from telegram import Bot
+from pymongo import MongoClient
+from redis import Redis
+from octo_barnacle import lock
+from octo_barnacle import storage
+from octo_barnacle import model
+from octo_barnacle.data import downloader
 
+logger = logging.getLogger(__name__)
 
 _trans_remove_punctuation = str.maketrans('', '', string.punctuation)
 _trans_remove_whitespace = str.maketrans('', '', string.whitespace)
@@ -48,3 +58,53 @@ def gen_append_range_number(str_gen, from_, to):
         yield s
         for num in range(from_, to+1):
             yield '{}{}'.format(s, num)
+
+
+def gen_remove_nonascii(str_gen):
+    """remove nonascii character
+
+    Arguments:
+        str_gen: string iterable
+
+    Return:
+        generator that generate string
+    """
+    for s in str_gen:
+        yield ''.join(c for c in s if c.isascii())
+
+
+def ch_workdir(workdir):
+    os.makedirs(workdir, exist_ok=True)
+    os.chdir(workdir)
+
+
+def get_bot(token):
+    return Bot(token)
+
+
+def get_storage(host, port, db):
+    db = MongoClient(host, port)[db]
+    return storage.StickerStorage(db)
+
+
+def get_lock_manager(host, port):
+    r = Redis(host, port)
+    return lock.LockManager(r)
+
+
+def get_downloader(delay):
+    return downloader.Downloader(delay)
+
+
+def collect_stickerset(bot, storage, lock_manager, stickerset_name):
+    try:
+        model.collect_stickerset(bot, storage, lock_manager, stickerset_name)
+        logger.info("collected {}".format(stickerset_name))
+    except model.StickerSetNotFoundError:
+        logger.info('cannot found stickerset {}'.format(stickerset_name))
+    except lock.LockError:
+        logger.info(
+            'searched {} before, ignore it now.'.format(stickerset_name))
+    except Exception:
+        logging.exception(
+            'encounter error while collect stickerset {}'.format(stickerset_name))

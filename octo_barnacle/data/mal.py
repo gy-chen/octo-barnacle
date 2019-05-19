@@ -120,10 +120,6 @@ class PageNotFoundError(Exception):
     pass
 
 
-class _DelayError(Exception):
-    pass
-
-
 class RecommendationParser:
 
     def parse(self, content):
