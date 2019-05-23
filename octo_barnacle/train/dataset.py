@@ -8,24 +8,93 @@ import tensorflow as tf
 from PIL import Image
 from sklearn import preprocessing
 from .emoji import predefined
-from .utils import get_storage
 
 logger = logging.getLogger(__name__)
 
-TRAIN_IMAGE_SIZE = 128
+IMAGE_SIZE = 128
 TRAIN_IMAGE_DROP_SIZE = 102
 IMAGE_DEPTH = 255
 
 
-def get_tf_dataset():
-    # TODO
-    storage = get_storage('127.0.0.1', 27017, 'octo_barnacle')
+def load_tf_dataset(filename):
+    """load saved stickers tfrecord file
+
+    Arguments:
+        filename (str): path that saved stickers data
+
+    Returns:
+        tf.train.Dataset
+    """
+    raw_dataset = tf.data.TFRecordDataset(filename)
+    dataset = raw_dataset.map(_decode_example)
+    return dataset
+
+
+def save_tf_dataset(dataset, filename):
+    """save stickers tensorflow dataset into tfrecord file
+
+    Arguments:
+        filename (str): path want to save tfrecord file
+
+    Returns:
+        tensorflow operation
+    """
+    serialized_dataset = dataset.map(_tf_serialize_example)
+    writer = tf.data.experimental.TFRecordWriter(filename)
+    return writer.write(serialized_dataset)
+
+
+def get_tf_dataset(storage):
+    """get stickers tensorflow dataset
+
+    Arguments:
+        storage (octo_barnacle.storage.StickerStorage): source of stickers data
+
+    Returns:
+        tf.data.Dataset
+    """
     ds = tf.data.Dataset.from_generator(
         functools.partial(_gen_sticker_records, storage),
         (tf.float32, tf.float32),
         (tf.TensorShape([128, 128, 3]), tf.TensorShape([3836]))
     )
     return ds
+
+
+def _tf_serialize_example(image, label):
+    tf_string = tf.py_function(
+        _serialize_example,
+        (image, label),
+        tf.string)
+    return tf.reshape(tf_string, ())
+
+
+def _serialize_example(image, label):
+    feature = {
+        'image': _bytes_feature(np.array(image).tostring()),
+        'label': _bytes_feature(np.array(label).tostring())
+    }
+    example_proto = tf.train.Example(
+        features=tf.train.Features(feature=feature))
+    return example_proto.SerializeToString()
+
+
+def _decode_example(serialized_example):
+    feature_description = {
+        'image': tf.FixedLenFeature([], tf.string),
+        'label': tf.FixedLenFeature([], tf.string)
+    }
+    features = tf.parse_single_example(
+        serialized_example,
+        features=feature_description
+    )
+
+    image = tf.decode_raw(features['image'], tf.float32)
+    image = tf.reshape(image, (IMAGE_SIZE, IMAGE_SIZE, 3))
+
+    label = tf.decode_raw(features['label'], tf.float32)
+
+    return image, label
 
 
 def _gen_sticker_records(storage):
@@ -66,7 +135,7 @@ def _sticker_image_to_array(image_content):
         logger.info('drop small size image {}x{}'.format(
             img.width, img.height))
         raise _DropImageException()
-    img = img.resize((TRAIN_IMAGE_SIZE, TRAIN_IMAGE_SIZE))
+    img = img.resize((IMAGE_SIZE, IMAGE_SIZE))
     return np.asarray(img)
 
 
@@ -83,3 +152,7 @@ def _get_label_binarizer():
         label_binarizer = preprocessing.LabelBinarizer()
         label_binarizer.fit(predefined.emojis)
     return label_binarizer
+
+
+def _bytes_feature(value):
+    return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
