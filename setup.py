@@ -20,7 +20,7 @@ REQUIRES = [
     'fasteners',
     'tensorflow',
     'sklearn',
-    'Pillow'
+    'Pillow',
     # TODO search for better place for dev dependency
     'pyrogram'
 ]
@@ -41,7 +41,8 @@ setup(
         'console_scripts': [
             'octo-barnacle-collect-mal-recommendation=octo_barnacle.collectors.mal:main',
             'octo-barnacle-collect-mal-characters=octo_barnacle.collectors.mal_character:main',
-            'octo-barnacle-bot=octo_barnacle.bot:main'
+            'octo-barnacle-bot=octo_barnacle.bot:main',
+            'octo-barnacle-stored-stickers-to-tfrecord=octo_barnacle.train.convert:main'
         ],
     },
 )
