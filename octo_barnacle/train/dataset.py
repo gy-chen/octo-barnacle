@@ -135,8 +135,20 @@ def _sticker_image_to_array(image_content):
         logger.info('drop small size image {}x{}'.format(
             img.width, img.height))
         raise _DropImageException()
-    img = img.resize((IMAGE_SIZE, IMAGE_SIZE))
+    img = _resize_sticker_image(img, IMAGE_SIZE)
     return np.asarray(img)
+
+
+def _resize_sticker_image(image, size):
+    result = Image.new('RGB', (size, size))
+    if image.height > image.width:
+        new_height = size
+        new_width = int(image.width * size / image.height)
+    else:
+        new_width = size
+        new_height = int(image.height * size / image.width)
+    result.paste(image.resize((new_width, new_height)))
+    return result
 
 
 class _DropImageException(Exception):

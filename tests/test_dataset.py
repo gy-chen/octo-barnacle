@@ -2,7 +2,9 @@ import os
 import bson
 import pytest
 import tensorflow as tf
+import numpy as np
 from pymongo import MongoClient
+from PIL import Image
 from octo_barnacle.train import dataset
 from octo_barnacle.train.emoji import predefined
 from octo_barnacle import storage
@@ -62,3 +64,38 @@ def test_load_tfrecords(test_tfrecords_filename):
         assert el[0].shape == (dataset.IMAGE_SIZE,
                                dataset.IMAGE_SIZE, 3)
         assert el[1].shape == (len(predefined.emojis), )
+
+
+def test_resize_small_image():
+    small_fat_image = Image.new('RGB', (100, 60), (255, 255, 255))
+    resized_small_fat_image = np.asarray(
+        dataset._resize_sticker_image(small_fat_image, 128))
+    assert resized_small_fat_image.shape == (128, 128, 3)
+    assert np.all(resized_small_fat_image[:76, :, :] == 255)
+    assert np.all(resized_small_fat_image[76:, :, :] == 0)
+
+    small_tall_image = Image.new('RGB', (60, 100), (255, 255, 255))
+    resized_small_tall_image = np.asarray(
+        dataset._resize_sticker_image(small_tall_image, 128)
+    )
+    assert resized_small_tall_image.shape == (128, 128, 3)
+    assert np.all(resized_small_tall_image[:, :76, :] == 255)
+    assert np.all(resized_small_tall_image[:, 76:, :] == 0)
+
+
+def test_resize_big_image():
+    big_fat_image = Image.new('RGB', (500, 400), (255, 255, 255))
+    resized_big_fat_image = np.asarray(
+        dataset._resize_sticker_image(big_fat_image, 128)
+    )
+    assert resized_big_fat_image.shape == (128, 128, 3)
+    assert np.all(resized_big_fat_image[:102, :, :] == 255)
+    assert np.all(resized_big_fat_image[102:, :, :] == 0)
+
+    big_tall_image = Image.new('RGB', (400, 500), (255, 255, 255))
+    resized_big_tall_image = np.asarray(
+        dataset._resize_sticker_image(big_tall_image, 128)
+    )
+    assert resized_big_tall_image.shape == (128, 128, 3)
+    assert np.all(resized_big_tall_image[:, :102, :] == 255)
+    assert np.all(resized_big_tall_image[:, 102:, :] == 0)
