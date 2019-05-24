@@ -12,7 +12,7 @@ from .emoji import predefined
 logger = logging.getLogger(__name__)
 
 IMAGE_SIZE = 128
-TRAIN_IMAGE_DROP_SIZE = 102
+IMAGE_DROP_SIZE = 64
 IMAGE_DEPTH = 255
 
 
@@ -131,7 +131,7 @@ def _sticker_to_record(sticker):
 def _sticker_image_to_array(image_content):
     buf = io.BytesIO(image_content)
     img = Image.open(buf)
-    if img.width < TRAIN_IMAGE_DROP_SIZE or img.height < TRAIN_IMAGE_DROP_SIZE:
+    if img.width < IMAGE_DROP_SIZE or img.height < IMAGE_DROP_SIZE:
         logger.info('drop small size image {}x{}'.format(
             img.width, img.height))
         raise _DropImageException()
