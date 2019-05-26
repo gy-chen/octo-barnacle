@@ -147,6 +147,10 @@ def _resize_sticker_image(image, size):
     else:
         new_width = size
         new_height = int(image.height * size / image.width)
+    if new_width < IMAGE_DROP_SIZE or new_height < IMAGE_DROP_SIZE:
+        logger.info('drop strange aspect ratio size image {}x{}'.format(
+            new_width, new_height))
+        raise _DropImageException()
     result.paste(image.resize((new_width, new_height)))
     return result
 
