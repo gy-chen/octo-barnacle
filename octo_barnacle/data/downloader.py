@@ -5,6 +5,7 @@ Downloader
 """
 import time
 import requests
+from requests.adapters import HTTPAdapter
 
 
 class Downloader:
@@ -17,6 +18,9 @@ class Downloader:
         Args:
             delay (int): delay between each requests in seconds.
         """
+        self._session = requests.Session()
+        # TODO add this in config
+        self._session.mount('http://', HTTPAdapter(max_retries=3))
         self._delay = delay
         self._last_req_time = None
 
@@ -41,7 +45,7 @@ class Downloader:
         headers = {}
         if self.USER_AGENT:
             headers['user-agent'] = self.USER_AGENT
-        res = requests.get(url, headers=headers)
+        res = self._session.get(url, headers=headers)
         res.raise_for_status()
         return res.text
 
