@@ -44,19 +44,21 @@ def save_tf_dataset(dataset, filename):
     return writer.write(serialized_dataset)
 
 
-def get_tf_dataset(storage):
+def get_tf_dataset(storage, emojis=predefined.top_10):
     """get stickers tensorflow dataset
 
     Arguments:
         storage (octo_barnacle.storage.StickerStorage): source of stickers data
+        emojis (tuple of str): tuple of accept emoji, will drop sticker if emoji not in this list 
 
     Returns:
         tf.data.Dataset
     """
     ds = tf.data.Dataset.from_generator(
-        functools.partial(_gen_sticker_records, storage),
+        functools.partial(_gen_sticker_records, storage, emojis),
         (tf.float32, tf.float32),
-        (tf.TensorShape([128, 128, 3]), tf.TensorShape([3836]))
+        (tf.TensorShape([IMAGE_SIZE, IMAGE_SIZE, 3]),
+         tf.TensorShape([len(emojis)]))
     )
     return ds
 
@@ -97,7 +99,7 @@ def _decode_example(serialized_example):
     return image, label
 
 
-def _gen_sticker_records(storage):
+def _gen_sticker_records(storage, emojis):
     """prcocess and generate stored stickers
 
     this method does:
@@ -106,23 +108,30 @@ def _gen_sticker_records(storage):
 
     Arguments:
         storage (octo_barnacle.storage.StickerStorage)
+        emojis (tuple of str): tuple of accept emoji, will drop sticker if emoji not in this list 
 
     Returns:
         iterable that generate ((img_w, img_h, img_channel), emoji)
     """
     for sticker in storage.get_stickers():
         try:
-            yield _sticker_to_record(sticker)
+            yield _sticker_to_record(sticker, emojis)
         except _DropImageException:
+            continue
+        except _DropUnrecognizedEmojiException:
             continue
 
 
-def _sticker_to_record(sticker):
+def _sticker_to_record(sticker, emojis):
+    if sticker['emoji'] not in emojis:
+        logger.info(
+            'Drop sticker of unrecognized emoji {}'.format(sticker['emoji']))
+        raise _DropUnrecognizedEmojiException()
     img = _sticker_image_to_array(sticker['image'])
     # drop alpha
     img = img[:, :, :3]
     img = (img - IMAGE_DEPTH / 2) / IMAGE_DEPTH
-    label_binarizer = _get_label_binarizer()
+    label_binarizer = _get_label_binarizer(emojis)
     label = label_binarizer.transform([sticker['emoji']])
     label = label.reshape(-1)
     return (img, label)
@@ -159,14 +168,14 @@ class _DropImageException(Exception):
     pass
 
 
-label_binarizer = None
+class _DropUnrecognizedEmojiException(Exception):
+    pass
 
 
-def _get_label_binarizer():
-    global label_binarizer
-    if label_binarizer is None:
-        label_binarizer = preprocessing.LabelBinarizer()
-        label_binarizer.fit(predefined.emojis)
+@functools.lru_cache()
+def _get_label_binarizer(emojis):
+    label_binarizer = preprocessing.LabelBinarizer()
+    label_binarizer.fit(emojis)
     return label_binarizer
 
 
