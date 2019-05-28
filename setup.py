@@ -18,11 +18,7 @@ REQUIRES = [
     'requests',
     'beautifulsoup4',
     'fasteners',
-    'tensorflow',
-    'sklearn',
     'Pillow',
-    # TODO search for better place for dev dependency
-    'pyrogram'
 ]
 
 setup(
