@@ -18,7 +18,6 @@ REQUIRES = [
     'requests',
     'beautifulsoup4',
     'fasteners',
-    'Pillow',
 ]
 
 setup(
