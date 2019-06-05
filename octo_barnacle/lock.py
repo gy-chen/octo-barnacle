@@ -36,11 +36,11 @@ class LockManager:
             resource (str): resource name
             lock_value (str): value that retrived from lock return value
         """
-        if self._redis.get(resource) == lock_value:
+        if self._redis.get(resource).decode() == lock_value:
             self._redis.delete(resource)
 
     def _generate_lock_value(self):
-        return uuid.uuid1().hex.encode()
+        return uuid.uuid1().hex
 
 
 class LockError(Exception):
