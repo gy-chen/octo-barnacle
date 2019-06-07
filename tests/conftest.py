@@ -3,8 +3,9 @@ import bson
 import pytest
 import dotenv
 from redis import Redis
-from octo_barnacle.config import MongoConfig
 from pymongo import MongoClient
+from octo_barnacle.bot import get_bot
+from octo_barnacle.config import MongoConfig
 
 dotenv.load_dotenv()
 basepath = os.path.dirname(__file__)
@@ -18,6 +19,11 @@ def redis():
     )
     yield r
     r.flushdb()
+
+
+@pytest.fixture
+def bot():
+    return get_bot()
 
 
 @pytest.fixture(scope='function')
