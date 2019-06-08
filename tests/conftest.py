@@ -44,4 +44,4 @@ def sample_stickerset():
 def sample_stickers():
     with open(os.path.join(basepath, 'sample_stickers.bson'), 'rb') as f:
         content = f.read()
-    return bson.BSON.decode(content)['stickers']
+    return bson.decode_all(content)
