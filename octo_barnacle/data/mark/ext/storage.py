@@ -1,5 +1,6 @@
-from octo_barnacle.data.mark.storage import MarkStickerStorage
+from flask import current_app
 from pymongo import MongoClient
+from octo_barnacle.data.mark.storage import MarkStickerStorage
 
 
 class _StorageState:
@@ -14,18 +15,18 @@ class StickerStorageExt:
             self.init_app(app)
 
     def init_app(self, app):
-        app.config.set_default('MARK_MONGO_HOST', '127.0.0.1')
-        app.config.set_defualt('MARK_MONGO_PORT', 27017)
-        app.config.set_default('MARK_MONGO_DB', 'octo_barnacle')
+        app.config.setdefault('MARK_MONGO_HOST', '127.0.0.1')
+        app.config.setdefault('MARK_MONGO_PORT', 27017)
+        app.config.setdefault('MARK_MONGO_DB', 'octo_barnacle')
         app.extensions['mark_storage'] = _StorageState()
 
     @property
     def storage(self):
-        state = app.extensions['mark_storage']
+        state = current_app.extensions['mark_storage']
         if state.storage is None:
             db = MongoClient(
-                app.config['MARK_MONGO_HOST'],
-                app.config['MARK_MONGO_PORT'],
-            )[app.config['MARK_MONGO_DB']]
+                current_app.config['MARK_MONGO_HOST'],
+                current_app.config['MARK_MONGO_PORT'],
+            )[current_app.config['MARK_MONGO_DB']]
             state.storage = MarkStickerStorage(db)
         return state.storage

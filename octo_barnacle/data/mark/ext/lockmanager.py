@@ -10,12 +10,12 @@ class MarkStickersetLockManagerExt:
             self.init_app(app)
 
     def init_app(self, app):
-        app.config.set_default('MARK_REDIS_HOST', '127.0.0.1')
-        app.config.set_default('MARK_REDIS_PORT', 6379)
+        app.config.setdefault('MARK_REDIS_HOST', '127.0.0.1')
+        app.config.setdefault('MARK_REDIS_PORT', 6379)
 
     @property
     def lockmanager(self):
         return MarkStickersetLockManager(Redis(
-            app.config['MARK_REDIS_HOST'],
-            app.config['MARK_REDIS_PORT']
+            current_app.config['MARK_REDIS_HOST'],
+            current_app.config['MARK_REDIS_PORT']
         ))

@@ -48,14 +48,44 @@ class MarkModel:
                 stickerset = next(stickersets)
                 resource = self._mark_lockmanager.lock(stickerset['name'])
                 batch.append({
-                    "stickerset": stickerset,
-                    "resource": resource
+                    "stickerset": self._proj_stickerset(stickerset),
+                    "resource": resource,
+                    "stickers": self.batch_stickers(stickerset['name'])
                 })
             except LockError:
                 continue
             except StopIteration:
                 break
         return batch
+
+    def batch_stickers(self, stickerset_name, limit=7):
+        """get small subset of stickers of stickerset
+
+        Arguments:
+            stickerset_name (str)
+            limit (int)
+
+        Returns:
+            list of dict in format {
+                "file_id": "image file id",
+                "emoji": "emoji"
+            }
+        """
+        stickers = self._storage.get_stickers(stickerset_name, limit)
+
+        return [self._proj_sticker(s) for s in stickers]
+
+    def _proj_sticker(self, sticker):
+        return {
+            'file_id': sticker['image_id'],
+            'emoji': sticker['emoji']
+        }
+
+    def _proj_stickerset(self, stickerset):
+        return {
+            'name': stickerset['name'],
+            'title': stickerset['title']
+        }
 
     def mark(self, stickerset_name, mark, resource):
         """mark specific stickerset

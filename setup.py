@@ -18,7 +18,9 @@ REQUIRES = [
     'requests',
     'beautifulsoup4',
     'fasteners',
-    'flask'
+    'flask',
+    'Flask-WTF',
+    'gunicorn'
 ]
 
 setup(
