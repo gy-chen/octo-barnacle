@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "outDir": "./dist/",
+        "moduleResolution": "node",
+        "module": "esnext",
+        "target": "es5",
+        "jsx": "react",
+        "jsxFactory": "h",
+        "sourceMap": true,
+        "noUnusedLocals": true,
+        "allowJs": false,
+    }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "octo-barnacle-web-mark",
+  "version": "0.0.1",
+  "description": "Marking stickersets features web interface",
+  "repository": "https://github.com/gy-chen/octo_barnacle",
+  "author": "<gy.chen@gms.nutc.edu.tw>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build:dev": "webpack",
+    "start:dev": "webpack-dev-server"
+  },
+  "devDependencies": {
+    "chokidar": "^3.0.1",
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^2.1.1",
+    "html-webpack-plugin": "^3.2.0",
+    "preact": "^8.4.2",
+    "style-loader": "^0.23.1",
+    "ts-loader": "^6.0.2",
+    "typed-css-modules": "^0.4.2",
+    "typescript": "^3.5.1",
+    "webpack": "^4.33.0",
+    "webpack-cli": "^3.3.3",
+    "webpack-dev-server": "^3.7.1"
+  },
+  "dependencies": {}
+}
