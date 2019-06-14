@@ -1,6 +1,6 @@
 
 import {
-    MARK_REQUEST,
+    START_MARK_REQUEST,
     UPDATE_MARK_RESULT,
     MARK_REQUEST_DONE,
     MarkResult,
@@ -20,7 +20,7 @@ const initialState: MarkState = {
 
 export const reducer = (state = initialState, action: MarkActionTypes): MarkState => {
     switch (action.type) {
-        case MARK_REQUEST:
+        case START_MARK_REQUEST:
             return {
                 isMarkRequesting: true,
                 markResults: {}

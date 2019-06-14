@@ -1,4 +1,4 @@
-export const MARK_REQUEST = 'MARK_REQUEST';
+export const START_MARK_REQUEST = 'START_MARK_REQUEST';
 export const UPDATE_MARK_RESULT = 'UPDATE_MARK_RESULT';
 export const MARK_REQUEST_DONE = 'MARK_REQUEST_DONE';
 
@@ -7,8 +7,8 @@ export enum MarkResult {
 
 }
 
-export interface MarkRequestAction {
-    type: typeof MARK_REQUEST;
+export interface StartMarkRequestAction {
+    type: typeof START_MARK_REQUEST;
 };
 
 export interface UpdateMarkResultAction {
@@ -23,4 +23,4 @@ export interface MarkRequestDoneAction {
     type: typeof MARK_REQUEST_DONE
 }
 
-export type MarkActionTypes = MarkRequestAction | UpdateMarkResultAction | MarkRequestDoneAction;
+export type MarkActionTypes = StartMarkRequestAction | UpdateMarkResultAction | MarkRequestDoneAction;

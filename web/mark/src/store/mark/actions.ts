@@ -1,16 +1,16 @@
 import {
-    MARK_REQUEST,
+    START_MARK_REQUEST,
     UPDATE_MARK_RESULT,
     MARK_REQUEST_DONE,
-    MarkRequestAction,
+    StartMarkRequestAction,
     UpdateMarkResultAction,
     MarkRequestDoneAction,
     MarkResult
 } from './types';
 
 // TODO turn this into thunk action
-export const markRequestAction = (): MarkRequestAction => ({
-    type: MARK_REQUEST
+export const startMarkRequestAction = (): StartMarkRequestAction => ({
+    type: START_MARK_REQUEST
 });
 
 export const updateMarkResultAction = (stickersetName: string, result: MarkResult): UpdateMarkResultAction => ({

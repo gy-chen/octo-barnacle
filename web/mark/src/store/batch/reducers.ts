@@ -1,6 +1,5 @@
 import {
-    NEXT_BATCH_REQUEST,
-    UPDATE_BATCH_DATA,
+    START_BATCH_REQUEST,
     BATCH_REQUEST_DONE,
     BatchStickeretData,
     BatchActionTypes
@@ -19,19 +18,14 @@ const initialState: BatchState = {
 
 export const reducer = (state = initialState, action: BatchActionTypes): BatchState => {
     switch (action.type) {
-        case NEXT_BATCH_REQUEST:
+        case START_BATCH_REQUEST:
             return {
                 data: [],
                 isBatchRequesting: true
             };
-        case UPDATE_BATCH_DATA:
-            return {
-                ...state,
-                data: action.payload,
-            };
         case BATCH_REQUEST_DONE:
             return {
-                ...state,
+                data: action.payload,
                 isBatchRequesting: false
             };
         default:
