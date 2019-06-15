@@ -1,18 +1,24 @@
 import {
     START_BATCH_REQUEST,
     BATCH_REQUEST_DONE,
-    BatchStickeretData,
+    BatchStickersetData,
+    Sticker,
+    Stickerset,
     BatchActionTypes
 } from './types';
 
 
 interface BatchState {
-    data: BatchStickeretData[];
+    stickersets: Stickerset[],
+    stickers: { [stickersetName: string]: Sticker[] };
+    resources: { [stickersetName: string]: string };
     isBatchRequesting: boolean;
 }
 
 const initialState: BatchState = {
-    data: [],
+    stickersets: [],
+    stickers: {},
+    resources: {},
     isBatchRequesting: false,
 };
 
@@ -20,15 +26,35 @@ export const reducer = (state = initialState, action: BatchActionTypes): BatchSt
     switch (action.type) {
         case START_BATCH_REQUEST:
             return {
-                data: [],
+                stickersets: [],
+                resources: {},
+                stickers: {},
                 isBatchRequesting: true
             };
         case BATCH_REQUEST_DONE:
             return {
-                data: action.payload,
+                stickersets: action.payload.map(d => d.stickerset),
+                stickers: _extractStickers(action.payload),
+                resources: _extractResources(action.payload),
                 isBatchRequesting: false
             };
         default:
             return state;
     }
 };
+
+const _extractResources = (batchStickersetsData: BatchStickersetData[]): BatchState["resources"] => {
+    const resources: BatchState["resources"] = {};
+    for (const stickersetData of batchStickersetsData) {
+        resources[stickersetData["stickerset"]["stickersetName"]] = stickersetData["resource"];
+    }
+    return resources;
+};
+
+const _extractStickers = (batchStickersetsData: BatchStickersetData[]): BatchState["stickers"] => {
+    const stickers: BatchState["stickers"] = {};
+    for (const stickersetData of batchStickersetsData) {
+        stickers[stickersetData["stickerset"]["stickersetName"]] = stickersetData["stickers"];
+    }
+    return stickers;
+}

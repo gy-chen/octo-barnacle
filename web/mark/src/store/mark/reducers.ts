@@ -1,21 +1,25 @@
 
 import {
     START_MARK_REQUEST,
+    UPDATE_MARK_FORM,
     UPDATE_MARK_RESULT,
     MARK_REQUEST_DONE,
     MarkResult,
-    MarkActionTypes
+    MarkActionTypes,
+    MarkType
 } from './types';
 
 
 interface MarkState {
     isMarkRequesting: boolean;
-    markResults: { [stickerset_name: string]: MarkResult };
+    markResults: { [stickersetName: string]: MarkResult };
+    markForms: { [stickersetName: string]: MarkType };
 }
 
 const initialState: MarkState = {
     isMarkRequesting: false,
-    markResults: {}
+    markResults: {},
+    markForms: {}
 };
 
 export const reducer = (state = initialState, action: MarkActionTypes): MarkState => {
@@ -23,11 +27,20 @@ export const reducer = (state = initialState, action: MarkActionTypes): MarkStat
         case START_MARK_REQUEST:
             return {
                 isMarkRequesting: true,
-                markResults: {}
+                markResults: {},
+                markForms: {}
+            };
+        case UPDATE_MARK_FORM:
+            return {
+                ...state,
+                markForms: {
+                    ...state.markForms,
+                    [action.payload.stickersetName]: action.payload.mark
+                }
             };
         case UPDATE_MARK_RESULT:
             return {
-                isMarkRequesting: state.isMarkRequesting,
+                ...state,
                 markResults: {
                     ...state.markResults,
                     [action.payload.stickersetName]: action.payload.result
