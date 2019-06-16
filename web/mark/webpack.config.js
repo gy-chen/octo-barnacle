@@ -1,7 +1,12 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const addCssTypes = require('./config/addCssTypes');
+const getClientEnvironment = require('./config/env');
+
+require('dotenv').config()
+
 
 module.exports = async () => {
 
@@ -40,7 +45,8 @@ module.exports = async () => {
         },
         plugins: [
             new CleanWebpackPlugin(),
-            new HtmlWebpackPlugin()
+            new HtmlWebpackPlugin(),
+            new webpack.DefinePlugin({ 'process.env': getClientEnvironment() })
         ],
         devtool: 'inline-source-map',
         devServer: {

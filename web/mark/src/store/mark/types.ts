@@ -16,7 +16,8 @@ export enum MarkResult {
     SUCCESS,
     INVALID_PARAMETERS,
     RESOURCE_EXPIRES,
-    STICKETSET_NOT_FOUND
+    STICKETSET_NOT_FOUND,
+    OTHER
 }
 
 export interface StartMarkRequestAction {
