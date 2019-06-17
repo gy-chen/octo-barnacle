@@ -17,4 +17,6 @@ storiesOf('MarkButton', module)
   .add('onClick', () => <MarkButton onClick={action('onClick')} />);
 
 storiesOf('NextBatchButton', module)
-  .add('basic', () => <NextBatchButton />);
+  .add('basic', () => <NextBatchButton />)
+  .add('disabled', () => <NextBatchButton disabled />)
+  .add('onClick', () => <NextBatchButton onClick={action('onClick')} />);
