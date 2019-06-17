@@ -1,0 +1,10 @@
+.nextBatchButton {
+    padding: 8px 12px;
+}
+
+.nextBatchIcon {
+    background-color: green;
+    width: 2rem;
+    height: 1.5rem;
+    clip-path: polygon(0 0, 50% 50%, 50% 0, 100% 50%, 50% 100%, 50% 50%, 0 100%);
+}
