@@ -1,0 +1,10 @@
+.markButton {
+    padding: 8px 12px;
+}
+
+.markIcon {
+    background-color: green;
+    width: 2rem;
+    height: 1.5rem;
+    clip-path: polygon(0% 42%, 34% 100%, 100% 14%, 89% 0%, 37% 66%, 10% 32%);
+}
