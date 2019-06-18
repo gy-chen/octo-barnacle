@@ -1,0 +1,23 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border: 1px solid black;
+    border-radius: .5rem;
+    width: 138px;
+    box-sizing: border-box;
+}
+
+.stickerImage {
+    box-sizing: border-box;
+    width: 120px;
+    height: 120px;
+    border-radius: .5rem;
+}
+
+.emoji {
+    font-size: 2rem;
+    margin: 0;
+}
