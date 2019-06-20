@@ -3,13 +3,10 @@ import { h } from 'preact';
 import { storiesOf } from '@storybook/preact';
 import { action } from '@storybook/addon-actions';
 
-import MarkStickersetForm from '../src/components/MarkStickersetForm';
 import MarkButton from '../src/components/MarkButton';
 import NextBatchButton from '../src/components/NextBatchButton';
+import Sticker from '../src/components/Sticker';
 
-
-storiesOf('MarkStickersetForm', module)
-  .add('basic', () => <MarkStickersetForm />);
 
 storiesOf('MarkButton', module)
   .add('basic', () => <MarkButton />)
@@ -20,3 +17,13 @@ storiesOf('NextBatchButton', module)
   .add('basic', () => <NextBatchButton />)
   .add('disabled', () => <NextBatchButton disabled />)
   .add('onClick', () => <NextBatchButton onClick={action('onClick')} />);
+
+storiesOf('Sticker', module)
+  .add('basic', () => {
+    const toStickerImageUrl = () => 'http://placehold.jp/120x120.png';
+    const sticker = {
+      fileId: 'demo',
+      emoji: '😀'
+    };
+    return <Sticker sticker={sticker} toStickerImageUrl={toStickerImageUrl} />;
+  });
