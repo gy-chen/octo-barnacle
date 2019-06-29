@@ -3,6 +3,25 @@
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+    border-radius: 8px;
+}
+
+.resultSuccess {
+    background-color: rgba(0, 255, 0, 0.3);
+}
+
+.resultResourceExpires {
+    background-color: rgba(255, 166, 0, 0.3);
+}
+
+.resultInvalidParameters, .resultStickersetNotFound, .resultOther, .resultError {
+    background-color: rgba(198, 0, 0, .3);
+}
+
+.errorMessage {
+    padding: 8px;
+    font-weight: bold;
+    color: red;
 }
 
 .imageSlideContainer {

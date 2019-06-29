@@ -2,14 +2,33 @@ import { h, Component } from 'preact';
 import * as styles from './markStickersetForm.css';
 import StickerComponent_ from '../Sticker';
 import { Stickerset, Sticker } from '../../store/batch/types';
-import { MarkType } from '../../store/mark/types';
+import { MarkType, MarkResult } from '../../store/mark/types';
+import { getErrorMessage } from './utils';
 
 interface Props {
     stickerset: Stickerset;
     stickers: Sticker[];
+    markResult?: MarkResult;
     selectedMarkType?: MarkType;
     onMarkTypeChange?: (stickersetName: string, markType: MarkType) => any;
     StickerComponent?: (props: { sticker: Sticker }) => JSX.Element;
+}
+
+const _getErrorClassName = (markResult?: MarkResult): string => {
+    switch (markResult) {
+        case MarkResult.SUCCESS:
+            return styles.resultSuccess;
+        case MarkResult.INVALID_PARAMETERS:
+            return styles.resultInvalidParameters;
+        case MarkResult.RESOURCE_EXPIRES:
+            return styles.resultResourceExpires;
+        case MarkResult.STICKETSET_NOT_FOUND:
+            return styles.resultStickersetNotFound;
+        case MarkResult.OTHER:
+            return styles.resultOther;
+        default:
+            return "";
+    }
 }
 
 class MarkStickerForm extends Component<Props> {
@@ -31,11 +50,22 @@ class MarkStickerForm extends Component<Props> {
         );
     }
 
+    _renderErrorMessage(markResult?: MarkResult) {
+        if (!markResult) {
+            return;
+        }
+        return (
+            <div className={styles.errorMessage}>
+                {getErrorMessage(markResult)}
+            </div>
+        );
+    }
+
     render() {
-        const { stickerset, stickers, StickerComponent = StickerComponent_ } = this.props;
+        const { stickerset, stickers, StickerComponent = StickerComponent_, markResult } = this.props;
 
         return (
-            <div className={styles.container}>
+            <div className={`${styles.container} ${_getErrorClassName(markResult)}`}>
                 <div className={styles.imageSlideContainer}>
                     {stickers.map(sticker => <StickerComponent sticker={sticker} />)}
                 </div>
@@ -47,6 +77,7 @@ class MarkStickerForm extends Component<Props> {
                     {this._renderRadioInput('EMPTY', stickerset.stickersetName, MarkType.EMPTY)}
                     {this._renderRadioInput('OTHER', stickerset.stickersetName, MarkType.OTHER)}
                 </div>
+                {this._renderErrorMessage(markResult)}
             </div>
         );
     }

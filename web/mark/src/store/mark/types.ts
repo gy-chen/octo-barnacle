@@ -13,6 +13,7 @@ export enum MarkType {
 }
 
 export enum MarkResult {
+    NONE,
     SUCCESS,
     INVALID_PARAMETERS,
     RESOURCE_EXPIRES,

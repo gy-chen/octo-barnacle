@@ -3,7 +3,7 @@ import { storiesOf } from '@storybook/preact';
 import { action } from '@storybook/addon-actions';
 import MarkStickersetForm from '../src/components/MarkStickersetForm';
 import Sticker from '../src/components/Sticker';
-import { MarkType } from '../src/store/mark/types';
+import { MarkType, MarkResult } from '../src/store/mark/types';
 
 
 const mockStickerset = {
@@ -43,4 +43,39 @@ storiesOf('MarkStickersetForm', module)
         stickers={mockStickers}
         StickerComponent={mockStickerComponent}
         onMarkTypeChange={action('onSelect')}
+    />)
+    .add('result: undefined', () => <MarkStickersetForm
+        stickerset={mockStickerset}
+        stickers={mockStickers}
+        StickerComponent={mockStickerComponent}
+    />)
+    .add('result: None', () => <MarkStickersetForm
+        stickerset={mockStickerset}
+        stickers={mockStickers}
+        StickerComponent={mockStickerComponent}
+        markResult={MarkResult.NONE}
+    />)
+    .add('result: Success', () => <MarkStickersetForm
+        stickerset={mockStickerset}
+        stickers={mockStickers}
+        StickerComponent={mockStickerComponent}
+        markResult={MarkResult.SUCCESS}
+    />)
+    .add('result: InvalidParameters', () => <MarkStickersetForm
+        stickerset={mockStickerset}
+        stickers={mockStickers}
+        StickerComponent={mockStickerComponent}
+        markResult={MarkResult.INVALID_PARAMETERS}
+    />)
+    .add('result: ResourceExpires', () => <MarkStickersetForm
+        stickerset={mockStickerset}
+        stickers={mockStickers}
+        StickerComponent={mockStickerComponent}
+        markResult={MarkResult.RESOURCE_EXPIRES}
+    />)
+    .add('result: StickersetNotFound', () => <MarkStickersetForm
+        stickerset={mockStickerset}
+        stickers={mockStickers}
+        StickerComponent={mockStickerComponent}
+        markResult={MarkResult.STICKETSET_NOT_FOUND}
     />);
