@@ -10,7 +10,7 @@ require('dotenv').config()
 
 module.exports = async () => {
 
-    await addCssTypes(path.join(__dirname, 'src'));
+    await addCssTypes(path.join(__dirname, 'src'), { watch: true });
 
     return {
         mode: 'development',

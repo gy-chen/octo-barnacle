@@ -2,7 +2,7 @@ const path = require('path');
 const addCssTypes = require('../config/addCssTypes');
 
 module.exports = async ({ config }) => {
-    await addCssTypes(path.join(__dirname, '../src'))
+    await addCssTypes(path.join(__dirname, '../src'), { watch: true });
 
     config.module.rules = [
         {
