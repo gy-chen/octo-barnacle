@@ -4,6 +4,7 @@ Some collected stickersets are not suit for training image to emoji classifeier,
 this package help to mark these stickersets.
 """
 from flask import Flask
+from flask_cors import CORS
 from .config import WebConfig
 from .api import bp as api_bp
 from . import ext
@@ -11,6 +12,7 @@ from . import ext
 
 def create_app(config=WebConfig):
     app = Flask(__name__)
+    CORS(app)
 
     app.config.from_object(config)
     app.config['WTF_CSRF_ENABLED'] = False

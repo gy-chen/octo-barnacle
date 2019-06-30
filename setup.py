@@ -20,6 +20,7 @@ REQUIRES = [
     'fasteners',
     'flask',
     'Flask-WTF',
+    'flask-cors',
     'gunicorn'
 ]
 

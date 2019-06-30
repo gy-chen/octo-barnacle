@@ -16,6 +16,9 @@ class MongoConfig:
 
 
 class WebConfig:
-    BOT_TOKEN = os.getenv('MARK_BOT_TOKEN', None)
-    REDIS = RedisConfig
-    MONGO = MongoConfig
+    MARK_BOT_TOKEN = os.getenv('MARK_BOT_TOKEN', None)
+    MARK_REDIS_HOST = RedisConfig.HOST
+    MARK_REDIS_PORT = RedisConfig.PORT
+    MARK_MONGO_HOST = MongoConfig.HOST
+    MARK_MONGO_PORT = MongoConfig.PORT
+    MARK_MONGO_DB = MongoConfig.DB

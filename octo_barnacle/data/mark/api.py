@@ -1,9 +1,11 @@
+import io
 import flask
-from flask import jsonify
+from flask import jsonify, send_file
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms.validators import DataRequired, ValidationError
 from .ext import model as model_ext
+from .ext import bot as bot_ext
 from .model import Mark, ResourceNotAcquiredError
 
 bp = flask.Blueprint('mark', __name__)
@@ -39,3 +41,13 @@ def mark(stickerset_name):
             return ('', 401)
         return ('', 200)
     return ('', 400)
+
+
+@bp.route('/file/<file_id>')
+def file(file_id):
+    bot = bot_ext.bot
+    file_ = bot.get_file(file_id)
+    buf = io.BytesIO()
+    file_.download(out=buf)
+    buf.seek(0)
+    return send_file(buf, mimetype="image/webp")
