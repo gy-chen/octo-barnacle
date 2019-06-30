@@ -1,5 +1,5 @@
-import { h } from 'preact';
-import { storiesOf } from '@storybook/preact';
+import * as React from 'react';
+import { storiesOf } from '@storybook/react';
 import MarkStickersetForm from '../src/components/MarkStickersetForm';
 import StickersetFormsPanel from '../src/components/StickersetFormsPanel';
 import Sticker from '../src/components/Sticker';

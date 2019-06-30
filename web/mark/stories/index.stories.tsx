@@ -1,6 +1,6 @@
-import { h } from 'preact';
+import * as React from 'react';
 
-import { storiesOf } from '@storybook/preact';
+import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import MarkButton from '../src/components/MarkButton';

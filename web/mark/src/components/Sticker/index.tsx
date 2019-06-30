@@ -1,4 +1,4 @@
-import { h } from 'preact';
+import * as React from 'react';
 import { Sticker } from '../../store/batch/types';
 import * as styles from './sticker.css';
 
@@ -7,8 +7,7 @@ interface Props {
     toStickerImageUrl?: (stickerFileId: Sticker['fileId']) => string;
 }
 
-// TODO
-const toStickerImageUrl_ = (stickerFileId: Sticker['fileId']) => stickerFileId;
+const toStickerImageUrl_ = (stickerFileId: Sticker['fileId']) => `${process.env.OCTO_BARNACLE_MARK_BASEURL}/file/${stickerFileId}`;
 
 const Sticker = (props: Props) => {
     const { sticker, toStickerImageUrl = toStickerImageUrl_ } = props;

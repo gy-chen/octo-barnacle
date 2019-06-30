@@ -1,4 +1,4 @@
-import { h, Component } from 'preact';
+import * as React from 'react';
 import * as styles from './markStickersetForm.css';
 import StickerComponent_ from '../Sticker';
 import { Stickerset, Sticker } from '../../store/batch/types';
@@ -31,7 +31,7 @@ const _getErrorClassName = (markResult?: MarkResult): string => {
     }
 }
 
-class MarkStickerForm extends Component<Props> {
+class MarkStickersetForm extends React.Component<Props> {
 
     _renderRadioInput(label: string, name: string, markType: MarkType) {
         const { selectedMarkType, onMarkTypeChange } = this.props;
@@ -83,4 +83,4 @@ class MarkStickerForm extends Component<Props> {
     }
 }
 
-export default MarkStickerForm;
+export default MarkStickersetForm;

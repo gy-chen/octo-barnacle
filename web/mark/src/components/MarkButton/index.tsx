@@ -1,4 +1,4 @@
-import { h } from 'preact';
+import * as React from 'react';
 import * as styles from './markButton.css';
 
 interface Props {
@@ -6,7 +6,7 @@ interface Props {
     disabled?: boolean
 }
 
-const MarkButton = (props: Props) => {
+const MarkButton = (props: Props): any => {
     const { disabled = false, onClick } = props;
     return (
         <button className={styles.markButton} disabled={disabled} onClick={onClick}>

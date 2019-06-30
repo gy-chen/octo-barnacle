@@ -1,4 +1,4 @@
-import { h } from 'preact';
+import * as React from 'react';
 import * as styles from './stickersetFormsPanel.css';
 
 interface Props {
