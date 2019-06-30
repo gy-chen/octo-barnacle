@@ -1,8 +1,13 @@
-import { h, render } from 'preact';
-import * as styles from './index.css';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import configureStore from './store';
+import App from './containers/App';
 
-const Hello = () => {
-    return <div className={styles.hello}>Hello</div>;
-};
+const store = configureStore();
 
-render(<Hello />, document.body);
+ReactDOM.render((
+    <Provider store={store}>
+        <App />
+    </Provider>
+), document.body);

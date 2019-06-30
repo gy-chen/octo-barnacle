@@ -46,7 +46,7 @@ export const reducer = (state = initialState, action: BatchActionTypes): BatchSt
 const _extractResources = (batchStickersetsData: BatchStickersetData[]): BatchState["resources"] => {
     const resources: BatchState["resources"] = {};
     for (const stickersetData of batchStickersetsData) {
-        resources[stickersetData["stickerset"]["stickersetName"]] = stickersetData["resource"];
+        resources[stickersetData["stickerset"]["name"]] = stickersetData["resource"];
     }
     return resources;
 };
@@ -54,7 +54,7 @@ const _extractResources = (batchStickersetsData: BatchStickersetData[]): BatchSt
 const _extractStickers = (batchStickersetsData: BatchStickersetData[]): BatchState["stickers"] => {
     const stickers: BatchState["stickers"] = {};
     for (const stickersetData of batchStickersetsData) {
-        stickers[stickersetData["stickerset"]["stickersetName"]] = stickersetData["stickers"];
+        stickers[stickersetData["stickerset"]["name"]] = stickersetData["stickers"];
     }
     return stickers;
 }

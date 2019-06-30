@@ -26,9 +26,9 @@ export const reducer = (state = initialState, action: MarkActionTypes): MarkStat
     switch (action.type) {
         case START_MARK_REQUEST:
             return {
+                ...state,
                 isMarkRequesting: true,
                 markResults: {},
-                markForms: {}
             };
         case UPDATE_MARK_FORM:
             return {

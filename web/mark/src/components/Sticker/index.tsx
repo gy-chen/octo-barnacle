@@ -7,17 +7,31 @@ interface Props {
     toStickerImageUrl?: (stickerFileId: Sticker['fileId']) => string;
 }
 
-const toStickerImageUrl_ = (stickerFileId: Sticker['fileId']) => `${process.env.OCTO_BARNACLE_MARK_BASEURL}/file/${stickerFileId}`;
+const toStickerImageUrl_ = (stickerFileId: Sticker['fileId']) => new URL(`file/${stickerFileId}`, process.env.OCTO_BARNACLE_MARK_BASEURL).href;
 
-const Sticker = (props: Props) => {
-    const { sticker, toStickerImageUrl = toStickerImageUrl_ } = props;
+class StickerComponent extends React.Component<Props> {
 
-    return (
-        <div className={styles.container}>
-            <img className={styles.stickerImage} src={toStickerImageUrl(sticker.fileId)} />
-            <p className={styles.emoji}>{sticker.emoji}</p>
-        </div>
-    );
-};
+    private _imgRef = React.createRef<HTMLImageElement>();
 
-export default Sticker;
+    componentDidMount() {
+        const { sticker, toStickerImageUrl = toStickerImageUrl_ } = this.props;
+
+        if (this._imgRef.current) {
+            this._imgRef.current.style.setProperty('--stickerImageUrl', `url(${toStickerImageUrl(sticker.fileId)}`);
+        }
+    }
+
+    render() {
+        const { sticker } = this.props;
+
+        return (
+            <div className={styles.container}>
+                <div className={styles.stickerImage} ref={this._imgRef} />
+                <p className={styles.emoji}>{sticker.emoji}</p>
+            </div>
+        );
+    }
+}
+
+
+export default StickerComponent;

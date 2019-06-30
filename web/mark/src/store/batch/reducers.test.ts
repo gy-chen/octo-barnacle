@@ -31,7 +31,7 @@ describe('test batch reducer', () => {
         const batchData: BatchStickersetData[] = [
             {
                 stickerset: {
-                    stickersetName: 'stickerset1',
+                    name: 'stickerset1',
                     title: 'StickerSet1'
                 },
                 resource: 'resource1',
@@ -48,7 +48,7 @@ describe('test batch reducer', () => {
             },
             {
                 stickerset: {
-                    stickersetName: 'stickerset2',
+                    name: 'stickerset2',
                     title: 'StickerSet2'
                 },
                 resource: 'resource2',
@@ -69,11 +69,11 @@ describe('test batch reducer', () => {
             isBatchRequesting: false,
             stickersets: [
                 {
-                    stickersetName: 'stickerset1',
+                    name: 'stickerset1',
                     title: 'StickerSet1'
                 },
                 {
-                    stickersetName: 'stickerset2',
+                    name: 'stickerset2',
                     title: 'StickerSet2'
                 }
             ],

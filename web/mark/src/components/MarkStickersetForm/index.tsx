@@ -33,7 +33,7 @@ const _getErrorClassName = (markResult?: MarkResult): string => {
 
 class MarkStickersetForm extends React.Component<Props> {
 
-    _renderRadioInput(label: string, name: string, markType: MarkType) {
+    _renderRadioInput(label: string, name: string, markType: MarkType, markResult?: MarkResult) {
         const { selectedMarkType, onMarkTypeChange } = this.props;
 
         return (
@@ -43,6 +43,7 @@ class MarkStickersetForm extends React.Component<Props> {
                     value={markType}
                     name={name}
                     checked={markType === selectedMarkType}
+                    disabled={!!markResult}
                     onChange={() => onMarkTypeChange && onMarkTypeChange(name, markType)}
                 />
                 <span>{label}</span>
@@ -70,12 +71,12 @@ class MarkStickersetForm extends React.Component<Props> {
                     {stickers.map(sticker => <StickerComponent sticker={sticker} />)}
                 </div>
                 <div className={styles.optionsContainer}>
-                    {this._renderRadioInput('OK', stickerset.stickersetName, MarkType.OK)}
-                    {this._renderRadioInput('MISLABEL', stickerset.stickersetName, MarkType.MISLABEL)}
-                    {this._renderRadioInput('NOT ANIME', stickerset.stickersetName, MarkType.NOT_ANIME)}
-                    {this._renderRadioInput('STRANGE MEME', stickerset.stickersetName, MarkType.STRANGE_MEME)}
-                    {this._renderRadioInput('EMPTY', stickerset.stickersetName, MarkType.EMPTY)}
-                    {this._renderRadioInput('OTHER', stickerset.stickersetName, MarkType.OTHER)}
+                    {this._renderRadioInput('OK', stickerset.name, MarkType.OK, markResult)}
+                    {this._renderRadioInput('MISLABEL', stickerset.name, MarkType.MISLABEL, markResult)}
+                    {this._renderRadioInput('NOT ANIME', stickerset.name, MarkType.NOT_ANIME, markResult)}
+                    {this._renderRadioInput('STRANGE MEME', stickerset.name, MarkType.STRANGE_MEME, markResult)}
+                    {this._renderRadioInput('EMPTY', stickerset.name, MarkType.EMPTY, markResult)}
+                    {this._renderRadioInput('OTHER', stickerset.name, MarkType.OTHER, markResult)}
                 </div>
                 {this._renderErrorMessage(markResult)}
             </div>

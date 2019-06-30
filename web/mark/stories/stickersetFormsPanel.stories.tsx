@@ -6,7 +6,7 @@ import Sticker from '../src/components/Sticker';
 import { MarkType } from '../src/store/mark/types';
 
 const generateMockStickerset = (appendix: string | number) => ({
-    stickersetName: `HiStickerset${appendix}`,
+    name: `HiStickerset${appendix}`,
     title: `Hi Stickerset${appendix}`
 });
 

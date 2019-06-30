@@ -7,7 +7,7 @@ import { MarkType, MarkResult } from '../src/store/mark/types';
 
 
 const mockStickerset = {
-    stickersetName: 'HiStickerset',
+    name: 'HiStickerset',
     title: 'Hi Stickerset'
 };
 

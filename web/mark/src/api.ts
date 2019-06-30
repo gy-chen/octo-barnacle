@@ -8,7 +8,12 @@ const client = axios.create({
 
 export const nextBatch = (): Promise<BatchStickersetData[]> => {
     return client.post('/stickerset/mark/next_batch')
-        .then(res => res.data);
+        .then(res => res.data.batch.map(
+            (batchData: any) => ({
+                ...batchData,
+                stickers: batchData.stickers.map((s: any) => ({ ...s, fileId: s.file_id }))
+            })
+        ));
 };
 
 export const mark = (stickersetName: string, resource: string, mark: MarkType): Promise<MarkResult> => {
