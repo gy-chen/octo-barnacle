@@ -16,6 +16,7 @@ const StickersetFormsPanelContainer = (props: Props) => {
 
     const toStickersetForm = (stickerset: Stickerset) => {
         return <MarkStickersetForm
+            key={stickerset.name}
             stickerset={stickerset}
             stickers={state.batch.stickers[stickerset.name]}
             selectedMarkType={state.mark.markForms[stickerset.name]}

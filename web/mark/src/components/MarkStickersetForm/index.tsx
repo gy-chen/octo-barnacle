@@ -68,7 +68,7 @@ class MarkStickersetForm extends React.Component<Props> {
         return (
             <div className={`${styles.container} ${_getErrorClassName(markResult)}`}>
                 <div className={styles.imageSlideContainer}>
-                    {stickers.map(sticker => <StickerComponent sticker={sticker} />)}
+                    {stickers.map(sticker => <StickerComponent key={sticker.fileId} sticker={sticker} />)}
                 </div>
                 <div className={styles.optionsContainer}>
                     {this._renderRadioInput('OK', stickerset.name, MarkType.OK, markResult)}
