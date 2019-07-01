@@ -8,12 +8,12 @@ const getClientEnvironment = require('./config/env');
 require('dotenv').config()
 
 
-module.exports = async () => {
-
-    await addCssTypes(path.join(__dirname, 'src'), { watch: true });
+module.exports = async (_, env) => {
+    const isProd = env.mode === 'production';
+    await addCssTypes(path.join(__dirname, 'src'), { watch: !isProd });
 
     return {
-        mode: 'development',
+        mode: isProd ? 'production' : 'development',
         entry: './src/index.tsx',
         module: {
             rules: [
@@ -48,7 +48,8 @@ module.exports = async () => {
             new HtmlWebpackPlugin(),
             new webpack.DefinePlugin({ 'process.env': getClientEnvironment() })
         ],
-        devtool: 'inline-source-map',
+        // XXX fix it later
+        //devtool: isProd ? 'source-map' : 'inline-source-map',
         devServer: {
             contentBase: './dist'
         },

@@ -8,7 +8,8 @@ const addCssTypes = (rootPath, opts = {}) => {
 
         const watchPaths = [path.join(rootPath, '**/*.css')];
         const watcher = chokidar.watch(watchPaths, {
-            ignored: '*.d.*'
+            ignored: '*.d.*',
+            persistent: watch,
         })
 
         const preReadyPromises = [];
