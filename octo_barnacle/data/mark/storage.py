@@ -3,6 +3,10 @@ from octo_barnacle.storage import StickerStorage
 
 class MarkStickerStorage(StickerStorage):
 
+    def __init__(self, db):
+        super().__init__(db)
+        self._db[self.COLLECTION_STICKERSET].create_index('mark')
+
     def get_unmark_stickersets(self):
         return self._db[self.COLLECTION_STICKERSET].find({
             'mark': {'$exists': False}

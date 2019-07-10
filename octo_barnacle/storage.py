@@ -17,6 +17,8 @@ class StickerStorage:
             db: Mongo database object
         """
         self._db = db
+        self._db[self.COLLECTION_STICKERSET].create_index('name')
+        self._db[self.COLLECTION_STICKERS].create_index('stickerset_name')
 
     def store(self, stickerset, stickers):
         """Store given stickerset and stickers
