@@ -45,3 +45,31 @@ def sample_stickers():
     with open(os.path.join(basepath, 'sample_stickers.bson'), 'rb') as f:
         content = f.read()
     return bson.decode_all(content)
+
+
+@pytest.fixture
+def sample_webp():
+    with open(os.path.join(basepath, 'sample_image.webp'), 'rb') as f:
+        return f.read()
+
+
+@pytest.fixture
+def app_config():
+    class RedisConfig:
+        HOST = os.getenv('TEST_REDIS_HOST')
+        PORT = int(os.getenv('TEST_REDIS_PORT'))
+
+    class MongoConfig:
+        HOST = os.getenv('TEST_MONGO_HOST')
+        PORT = int(os.getenv('TEST_MONGO_PORT'))
+        DB = os.getenv('TEST_MONGO_DB')
+
+    class WebConfig:
+        MARK_BOT_TOKEN = os.getenv('TEST_BOT_TOKEN')
+        MARK_REDIS_HOST = RedisConfig.HOST
+        MARK_REDIS_PORT = RedisConfig.PORT
+        MARK_MONGO_HOST = MongoConfig.HOST
+        MARK_MONGO_PORT = MongoConfig.PORT
+        MARK_MONGO_DB = MongoConfig.DB
+
+    return WebConfig
