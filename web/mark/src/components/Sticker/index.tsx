@@ -7,7 +7,7 @@ interface Props {
     toStickerImageUrl?: (stickerFileId: Sticker['fileId']) => string;
 }
 
-const toStickerImageUrl_ = (stickerFileId: Sticker['fileId']) => new URL(`file/${stickerFileId}`, process.env.OCTO_BARNACLE_MARK_BASEURL).href;
+const toStickerImageUrl_ = (stickerFileId: Sticker['fileId']) => new URL(`file/${stickerFileId}`, process.env.OCTO_BARNACLE_FILE_BASEURL).href;
 
 class StickerComponent extends React.Component<Props> {
 
