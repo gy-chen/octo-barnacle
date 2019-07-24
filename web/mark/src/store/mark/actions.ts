@@ -45,8 +45,11 @@ export const updateMarkFormAction = (stickersetName: string, mark: MarkType): Up
 export const startMarkRequestAction = (markRequest: (stickersetName: string, resource: string, mark: MarkType) => Promise<MarkResult>): ThunkResult<void> => {
     return async (dispatch, getState) => {
         dispatch(_startMarkRequestAction());
-        const { mark: { markForms }, batch: { resources } } = getState();
+        const { mark: { markForms, markResults }, batch: { resources } } = getState();
         for (const stickersetName of Object.keys(markForms)) {
+            if (markResults[stickersetName] !== undefined) {
+                continue;
+            }
             const resource = resources[stickersetName];
             const markResult = await markRequest(stickersetName, resource, markForms[stickersetName]);
             dispatch(_updateMarkResultAction(stickersetName, markResult));

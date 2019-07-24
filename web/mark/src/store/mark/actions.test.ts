@@ -17,13 +17,16 @@ describe('test startMarkRequestAction', () => {
                 stickers: {},
                 resources: {
                     stickerset1: 'resource1',
-                    stickerset2: 'resource2'
+                    stickerset2: 'resource2',
+                    stickerset3: 'resource3'
                 },
                 isBatchRequesting: false,
             },
             mark: {
                 isMarkRequesting: false,
-                markResults: {},
+                markResults: {
+                    stickerset3: MarkResult.SUCCESS
+                },
                 markForms: {
                     stickerset1: MarkType.OK,
                     stickerset2: MarkType.MISLABEL
